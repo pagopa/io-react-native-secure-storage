@@ -36,16 +36,18 @@ import javax.crypto.spec.GCMParameterSpec
  * @property useEncryption if manual encryption has to be used.
  */
 class SecureStorage private constructor(
-  context: Context, storageDirectory: File, useEncryption: Boolean
+  context: Context, storageDirectory: File, useEncryption: Boolean, useStrongBox: Boolean
 ) {
 
   private val context: Context
   private val storageDirectory: File
+  private val useStrongBox: Boolean
   private val useEncryption: Boolean
 
   init {
     this.context = context
     this.storageDirectory = storageDirectory
+    this.useStrongBox = useStrongBox
     this.useEncryption = useEncryption
   }
 
@@ -208,7 +210,7 @@ class SecureStorage private constructor(
     ).setBlockModes(KeyProperties.BLOCK_MODE_GCM).setKeySize(128)
       .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-      if (hasStrongBox) builder.setIsStrongBoxBacked(true)
+      if (hasStrongBox && useStrongBox) builder.setIsStrongBoxBacked(true)
       builder.setUnlockedDeviceRequired(true)
     }
     val keyPairGenerator = KeyGenerator.getInstance(
@@ -383,16 +385,25 @@ class SecureStorage private constructor(
       else -> true
     }
 
+    private var useStrongBox = true
+
     /**
-     * Sets if manual encryption has to be used or not. By defaul, the builder takes care of
+     * Sets if manual encryption has to be used or not. By default, the builder takes care of
      * using an appropriate [useEncryption] value according to the
      * provided [storageDirectory] which might be already encrypted.
      */
     fun setUseEncryption(encrypted: Boolean) = apply { this.useEncryption = encrypted }
 
     /**
+     * Sets if StrongBox has to be used or not. By default, this is always true when possible.
+     * If this is manually set to true on devices which don't support it, TEE will be used
+     * as fallback.
+     */
+    fun setUseStrongBox(useStrongBox: Boolean) = apply { this.useStrongBox = useStrongBox }
+
+    /**
      * Builds an instance of [SecureStorage].
      */
-    fun build() = SecureStorage(context, storageDirectory, useEncryption)
+    fun build() = SecureStorage(context, storageDirectory, useEncryption, useStrongBox)
   }
 }
