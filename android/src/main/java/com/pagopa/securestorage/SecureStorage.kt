@@ -150,6 +150,8 @@ class SecureStorage private constructor(
    * Manual encryption uses AES-128 GCM with hardware backed key for each file in [storageDirectory]
    * Automatic encryption possibly uses [file-based encryption](https://source.android.com/docs/security/features/encryption/file-based)
    * thus AES-256 in XTS mode for file content and AES-256 in CBC-CTS mode for file names.
+   * @param key the identifier of the file.
+   * @param data the data to be written.
    * @throws SecureStorageException when hardware backed keys are not supported for manual
    * encryption or when an error occurs while writing data.
    */
@@ -398,6 +400,7 @@ class SecureStorage private constructor(
      * Sets if StrongBox has to be used or not. By default, this is always true when possible.
      * If this is manually set to true on devices which don't support it, TEE will be used
      * as fallback.
+     * This has be called before any other method and will have no effect if called after the first put method.
      */
     fun setUseStrongBox(useStrongBox: Boolean) = apply { this.useStrongBox = useStrongBox }
 

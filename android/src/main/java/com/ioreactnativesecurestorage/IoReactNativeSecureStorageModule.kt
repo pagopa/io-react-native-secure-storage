@@ -4,6 +4,7 @@ import com.example.securestorage.SecureStorage
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
+import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeArray
@@ -43,46 +44,32 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   /**
    * @see [SecureStorage.Builder.setUseEncryption]
    */
-  fun setUseEncryption(useEncryption: Boolean) {
+  @ReactMethod
+  fun setUseEncryption(useEncryption: Boolean, promise: Promise) {
     this.useEncryption = useEncryption
+    promise.resolve(null)
   }
 
   /**
    * @see [SecureStorage.Builder.setUseStrongBox]
    */
-  fun setUseStrongBox(useStrongBox: Boolean) {
+  @ReactMethod
+  fun setUseStrongBox(useStrongBox: Boolean, promise: Promise) {
     this.useStrongBox = useStrongBox
-  }
-
-  /**
-   * @see [SecureStorage.get]
-   * This is run on a different thread due to heavy I/O operations.
-   */
-  fun get(key: String, promise: Promise) {
-    Thread {
-      try {
-        secureStorage?.let {
-          it.get(key)
-        } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
-          promise
-        )
-      } catch (e: Exception) {
-        ModuleException.GET_FAILED.reject(
-          promise
-        )
-      }
-    }.start()
+    promise.resolve(null)
   }
 
   /**
    * @see [SecureStorage.put]
    * This is run on a different thread due to heavy I/O operations.
    */
+  @ReactMethod
   fun put(key: String, data: String, promise: Promise) {
     Thread {
       try {
         secureStorage?.let {
           it.put(key, data.toByteArray())
+          promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
         )
@@ -95,14 +82,37 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   }
 
   /**
+   * @see [SecureStorage.get]
+   * This is run on a different thread due to heavy I/O operations.
+   */
+  @ReactMethod
+  fun get(key: String, promise: Promise) {
+    Thread {
+      try {
+        secureStorage?.let {
+          promise.resolve( it.get(key).toString())
+        } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
+          promise
+        )
+      } catch (e: Exception) {
+        ModuleException.GET_FAILED.reject(
+          promise
+        )
+      }
+    }.start()
+  }
+
+  /**
    * @see [SecureStorage.clear]
    * This is run on a different thread due to heavy I/O operations.
    */
+  @ReactMethod
   fun clear(promise: Promise) {
     Thread {
       try {
         secureStorage?.let {
           it.clear()
+          promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
         )
@@ -118,11 +128,13 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
    * @see [SecureStorage.remove]
    * This is run on a different thread due to heavy I/O operations.
    */
+  @ReactMethod
   fun remove(key: String, promise: Promise) {
     Thread {
       try {
         secureStorage?.let {
           it.remove(key)
+          promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
         )
@@ -137,6 +149,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   /**
    * @see [SecureStorage.keys]
    */
+  @ReactMethod
   fun keys(promise: Promise) {
     try {
       secureStorage?.let {
