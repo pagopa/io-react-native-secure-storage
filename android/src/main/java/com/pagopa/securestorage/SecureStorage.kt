@@ -1,4 +1,4 @@
-package com.example.securestorage
+package com.pagopa.securestorage
 
 import android.content.Context
 import android.content.pm.PackageManager
@@ -11,8 +11,6 @@ import android.security.keystore.KeyProperties.SECURITY_LEVEL_STRONGBOX
 import android.security.keystore.KeyProperties.SECURITY_LEVEL_TRUSTED_ENVIRONMENT
 import android.security.keystore.KeyProperties.SECURITY_LEVEL_UNKNOWN_SECURE
 import android.util.AtomicFile
-import com.example.securestorage.SecureStorage.Builder
-import com.pagopa.securestorage.SecureStorageException
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
@@ -400,7 +398,7 @@ class SecureStorage private constructor(
      * Sets if StrongBox has to be used or not. By default, this is always true when possible.
      * If this is manually set to true on devices which don't support it, TEE will be used
      * as fallback.
-     * This has be called before any other method and will have no effect if called after the first put method.
+     * This has to be called before any other method and will have no effect if called after the first put method.
      */
     fun setUseStrongBox(useStrongBox: Boolean) = apply { this.useStrongBox = useStrongBox }
 

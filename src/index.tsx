@@ -18,12 +18,6 @@ const IoReactNativeSecureStorage = NativeModules.IoReactNativeSecureStorage
     );
 
 /**
- * Platform specific error codes which can be used as a value too.
- */
-enum SecureStoragePlatformErrorCodes {
-  ANDROID_ONLY_FUNCTION = 'ANDROID_ONLY_FUNCTION',
-}
-/**
  * ANDROID ONLY
  * Error codes returned by the Android module.
  */
@@ -34,9 +28,7 @@ type SecureStoragErrorCodesAndroid =
   | 'KEYS_RETRIEVAL_FAILED'
   | 'SECURE_STORE_NOT_INITIALIZED';
 
-export type SecureStorageErrorCodes =
-  | SecureStoragErrorCodesAndroid
-  | SecureStoragePlatformErrorCodes;
+export type SecureStorageErrorCodes = SecureStoragErrorCodesAndroid;
 
 /**
  * Error type returned by a rejected promise.
@@ -59,7 +51,7 @@ export type SecureStorageError = {
 export function setUseStrongBox(useStrongBox: boolean) {
   Platform.select({
     ios: () => {
-      Promise.reject(SecureStoragePlatformErrorCodes.ANDROID_ONLY_FUNCTION);
+      Promise.reject(); //TODO: add iOS related error
     },
     android: () => {
       return IoReactNativeSecureStorage.setUseStrongBox(useStrongBox);
@@ -76,7 +68,7 @@ export function setUseStrongBox(useStrongBox: boolean) {
 export function setUseEncryption(useEncryption: boolean) {
   Platform.select({
     ios: () => {
-      Promise.reject(SecureStoragePlatformErrorCodes.ANDROID_ONLY_FUNCTION);
+      Promise.reject(); //TODO: add iOS related error
     },
     android: () => {
       return (IoReactNativeSecureStorage.useEncryption = useEncryption);
@@ -113,7 +105,7 @@ export function put(key: string, data: string): Promise<void> {
  * @param key the identifier of the file.
  * @return a promise that resolves with the requested data or rejects with a [SecureStorageError] if an error occurs.
  */
-export function get(key: string): Promise<string> {
+export function get(key: string): Promise<string | null> {
   return IoReactNativeSecureStorage.get(key);
 }
 

@@ -1,6 +1,6 @@
 package com.ioreactnativesecurestorage
 
-import com.example.securestorage.SecureStorage
+import android.util.Log
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -9,7 +9,9 @@ import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeArray
 import com.facebook.react.bridge.WritableNativeMap
+import com.pagopa.securestorage.SecureStorage
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 
 class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
@@ -68,6 +70,8 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
     Thread {
       try {
         secureStorage?.let {
+          Log.e("HERE", data.length.toString())
+          Log.e("HERE", data.toByteArray().size.toString())
           it.put(key, data.toByteArray())
           promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
@@ -75,7 +79,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         )
       } catch (e: Exception) {
         ModuleException.PUT_FAILED.reject(
-          promise
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -90,13 +94,17 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
     Thread {
       try {
         secureStorage?.let {
-          promise.resolve( it.get(key).toString())
+          val result = it.get(key)
+          result?.let {
+            promise.resolve(result.toString(StandardCharsets.UTF_8))
+          } ?: promise.resolve(null)
+          promise.resolve(it.get(key).toString())
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
         )
       } catch (e: Exception) {
         ModuleException.GET_FAILED.reject(
-          promise
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -118,7 +126,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         )
       } catch (e: Exception) {
         ModuleException.CLEAR_FAILED.reject(
-          promise
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -140,7 +148,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         )
       } catch (e: Exception) {
         ModuleException.CLEAR_FAILED.reject(
-          promise
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -164,13 +172,23 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
       )
     } catch (e: Exception) {
       ModuleException.KEYS_RETRIEVAL_FAILED.reject(
-        promise
+        promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
       )
     }
   }
 
+  /**
+   * Extracts a message from an [Exception] with an empty string as fallback.
+   * @param e an exception.
+   * @return [e] message field or an empty string otherwise.
+   */
+  private fun getExceptionMessageOrEmpty(e: Exception): String {
+    return e.message ?: ""
+  }
+
   companion object {
     const val NAME = "IoReactNativeSecureStorage"
+    const val ERROR_USER_INFO_KEY = "error"
 
     private enum class ModuleException(
       val ex: Exception

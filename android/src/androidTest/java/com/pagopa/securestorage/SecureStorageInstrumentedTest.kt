@@ -1,11 +1,12 @@
 package com.pagopa.securestorage
 
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.securestorage.SecureStorage
+import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Assert.assertArrayEquals
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.Assert.*
 import java.io.File
 import kotlin.random.Random
 
