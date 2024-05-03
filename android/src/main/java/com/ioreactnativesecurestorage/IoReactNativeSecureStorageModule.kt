@@ -1,6 +1,5 @@
 package com.ioreactnativesecurestorage
 
-import android.util.Log
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -70,8 +69,6 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
     Thread {
       try {
         secureStorage?.let {
-          Log.e("HERE", data.length.toString())
-          Log.e("HERE", data.toByteArray().size.toString())
           it.put(key, data.toByteArray())
           promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
@@ -97,8 +94,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
           val result = it.get(key)
           result?.let {
             promise.resolve(result.toString(StandardCharsets.UTF_8))
-          } ?: promise.resolve(null)
-          promise.resolve(it.get(key).toString())
+          } ?: ModuleException.VALUE_NOT_FOUND.reject(promise)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
         )
@@ -193,6 +189,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
     private enum class ModuleException(
       val ex: Exception
     ) {
+      VALUE_NOT_FOUND(Exception("VALUE_NOT_FOUND")),
       GET_FAILED(Exception("GET_FAILED")),
       PUT_FAILED(Exception("PUT_FAILED")),
       CLEAR_FAILED(Exception("CLEAR_FAILED")),

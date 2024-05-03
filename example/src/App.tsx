@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,14 +10,59 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import * as SecureStorage from 'io-react-native-secure-storage';
+import CheckBox from '@react-native-community/checkbox';
 
 const MARGIN = 20;
+
+const MAX_VALUE_LENGTH = 1000;
+
+const COLOR = 'blue';
 
 export default function App() {
   const [key, setKey] = React.useState<string | undefined>();
   const [value, setValue] = React.useState<string | undefined>();
   const [status, setStatus] = React.useState<string | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [disableStrongBox, setDisableStrongBox] =
+    React.useState<boolean>(false);
+  const [forceEncryption, setForceEncryption] = React.useState<boolean>(false);
+
+  const RenderAndroidHeader = useCallback(
+    () => (
+      <View style={styles.marginBottom}>
+        <View style={styles.checkbox}>
+          <Text>Disable StrongBox</Text>
+          <CheckBox
+            value={disableStrongBox}
+            onValueChange={async (newValue) => {
+              setDisableStrongBox(newValue);
+              await SecureStorage.setUseStrongBox(newValue);
+            }}
+            tintColors={{ true: COLOR, false: COLOR }}
+          />
+        </View>
+        <Text>
+          Note: StrongBox can be disabled only before the first operation. If
+          automatic encyrption is used then the value will be ignored.
+        </Text>
+        <View style={styles.checkbox}>
+          <Text>Force manual encryption</Text>
+          <CheckBox
+            value={forceEncryption}
+            onValueChange={async (newValue) => {
+              setForceEncryption(newValue);
+              await SecureStorage.setUseEncryption(newValue);
+            }}
+            tintColors={{ true: COLOR, false: COLOR }}
+          />
+        </View>
+        <Text>
+          Note: Manual encryption can be set only before the first operation.
+        </Text>
+      </View>
+    ),
+    [disableStrongBox, forceEncryption]
+  );
 
   const put = async () => {
     if (key && value) {
@@ -43,7 +88,14 @@ export default function App() {
         setIsLoading(true);
         const result = await SecureStorage.get(key);
         setIsLoading(false);
-        setStatus(`Recovered value: ${result}`);
+        if (result.length > MAX_VALUE_LENGTH) {
+          setStatus(
+            `Recovered value (sliced): ${result.slice(0, MAX_VALUE_LENGTH)}...`
+          );
+        } else {
+          setStatus(`Recovered value: ${result}`);
+        }
+        console.log(JSON.stringify(result));
       } catch (e) {
         const error = e as SecureStorage.SecureStorageError;
         setIsLoading(false);
@@ -87,6 +139,24 @@ export default function App() {
     }
   };
 
+  const keys = async () => {
+    try {
+      setIsLoading(true);
+      const res = await SecureStorage.keys();
+      setIsLoading(false);
+      setStatus(`Keys: ${res}`);
+    } catch (e) {
+      const error = e as SecureStorage.SecureStorageError;
+      setIsLoading(false);
+      setStatus(`Error: ${error.message}`);
+      console.log(JSON.stringify(e));
+    }
+  };
+
+  const setBigValue = () => {
+    setValue('x'.repeat(2 * 1024 * 1024));
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -96,6 +166,7 @@ export default function App() {
         <Text style={[styles.title, styles.marginBottom]}>
           Secure Storage Example App
         </Text>
+        {Platform.OS === 'android' && <RenderAndroidHeader />}
         <View>
           <Text>Key</Text>
           <TextInput
@@ -113,17 +184,23 @@ export default function App() {
         </View>
 
         <View style={[styles.buttons, styles.marginBottom]}>
-          <Button title="Put" color="blue" onPress={() => put()} />
+          <Button title="Put" color={COLOR} onPress={() => put()} />
 
-          <Button title="Get" color="blue" onPress={() => get()} />
+          <Button title="Get" color={COLOR} onPress={() => get()} />
 
-          <Button title="Delete" color="blue" onPress={() => remove()} />
+          <Button title="Delete" color={COLOR} onPress={() => remove()} />
 
-          <Button title="Clear" color="blue" onPress={() => clear()} />
+          <Button title="Clear" color={COLOR} onPress={() => clear()} />
+
+          <Button title="Get Keys" color={COLOR} onPress={() => keys()} />
         </View>
 
-        <View style={styles.buttonsCenter}>
-          <Button title="Get Keys" color="blue" />
+        <View style={styles.marginBottom}>
+          <Button
+            title="Set 2MiB Value"
+            color={COLOR}
+            onPress={() => setBigValue()}
+          />
         </View>
 
         {status && <Text>{status}</Text>}
@@ -167,5 +244,10 @@ const styles = StyleSheet.create({
   },
   buttonsCenter: {
     justifyContent: 'center',
+  },
+  checkbox: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });

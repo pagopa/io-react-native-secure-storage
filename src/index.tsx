@@ -48,15 +48,8 @@ export type SecureStorageError = {
  * as fallback.
  * This has be called before any other method and will have no effect if called after the first put method.
  */
-export function setUseStrongBox(useStrongBox: boolean) {
-  Platform.select({
-    ios: () => {
-      Promise.reject(); //TODO: add iOS related error
-    },
-    android: () => {
-      return IoReactNativeSecureStorage.setUseStrongBox(useStrongBox);
-    },
-  });
+export function setUseStrongBox(useStrongBox: boolean): Promise<void> {
+  return IoReactNativeSecureStorage.setUseStrongBox(useStrongBox);
 }
 
 /**
@@ -66,14 +59,7 @@ export function setUseStrongBox(useStrongBox: boolean) {
  * provided storageDirectory which might be already encrypted on most devices.
  */
 export function setUseEncryption(useEncryption: boolean) {
-  Platform.select({
-    ios: () => {
-      Promise.reject(); //TODO: add iOS related error
-    },
-    android: () => {
-      return (IoReactNativeSecureStorage.useEncryption = useEncryption);
-    },
-  });
+  return IoReactNativeSecureStorage.setUseEncryption(useEncryption);
 }
 
 /**
@@ -105,7 +91,7 @@ export function put(key: string, data: string): Promise<void> {
  * @param key the identifier of the file.
  * @return a promise that resolves with the requested data or rejects with a [SecureStorageError] if an error occurs.
  */
-export function get(key: string): Promise<string | null> {
+export function get(key: string): Promise<string> {
   return IoReactNativeSecureStorage.get(key);
 }
 

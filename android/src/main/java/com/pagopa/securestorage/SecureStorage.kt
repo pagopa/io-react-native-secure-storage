@@ -279,7 +279,6 @@ class SecureStorage private constructor(
      * Decrypts [encryptedData] with [secretKey] using [CIPHER_TYPE].
      * The function extracts the IV from the first [GCM_IV_LENGTH] bytes of [encryptedData]
      * and uses it along with [secretKey] to decrypt [encryptedData].
-     * Decrypting is done in one single single.
      * @return a decrypted byte array.
      * @throws IllegalStateException when an error occurs while decrypting.
      */
