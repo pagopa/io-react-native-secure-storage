@@ -43,8 +43,8 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
    * @see [SecureStorage.Builder.setEnforceManualEncryption]
    */
   @ReactMethod
-  fun setEnforceManualEncryption(promise: Promise) {
-    this.forceManualEncryption = true
+  fun setEnforceManualEncryption(isEnforced: Boolean, promise: Promise) {
+    this.forceManualEncryption = isEnforced
     promise.resolve(null)
   }
 

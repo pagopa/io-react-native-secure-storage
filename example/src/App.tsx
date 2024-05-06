@@ -189,7 +189,7 @@ export default function App() {
           />
         </View>
 
-        <View style={[styles.buttons, styles.marginBottom]}>
+        <View style={[styles.marginBottom]}>
           <Button title="Run Tests" color={COLOR} onPress={() => tests()} />
         </View>
 
