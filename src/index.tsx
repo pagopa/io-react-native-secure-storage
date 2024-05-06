@@ -22,7 +22,7 @@ const IoReactNativeSecureStorage = NativeModules.IoReactNativeSecureStorage
  * Error codes returned by the Android module.
  */
 type SecureStoragErrorCodesAndroid =
-  // UPDATE ME
+  | 'VALUE_NOT_FOUND'
   | 'GET_FAILED'
   | 'PUT_FAILED'
   | 'CLEAR_FAILED'
