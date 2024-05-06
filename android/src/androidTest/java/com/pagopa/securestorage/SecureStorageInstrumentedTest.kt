@@ -49,7 +49,7 @@ class SecureStorageInstrumentedTest {
    */
   @Test
   fun testManualEncryption() {
-    val storage = SecureStorage.Builder(context, storageDir).setUseEncryption(true).build()
+    val storage = SecureStorage.Builder(context, storageDir).setEnforceManualEncryption(true).build()
     val value = byteArrayOf(1, 2, 3)
     storage.put("test", value)
     assertArrayEquals(storage.get("test"), value)
@@ -61,7 +61,7 @@ class SecureStorageInstrumentedTest {
   @Test
   fun testManualEncryptionLarge() {
     val storage: SecureStorage =
-      SecureStorage.Builder(context, storageDir).setUseEncryption(true).build()
+      SecureStorage.Builder(context, storageDir).setEnforceManualEncryption(true).build()
     storage.clear()
     val data = ByteArray(2 * 1024 * 1024)
     Random.nextBytes(data, 0, data.size - 1)
@@ -76,7 +76,7 @@ class SecureStorageInstrumentedTest {
   @Test
   fun testEmptyGet() {
     val storage: SecureStorage =
-      SecureStorage.Builder(context, storageDir).setUseEncryption(true).build()
+      SecureStorage.Builder(context, storageDir).setEnforceManualEncryption(true).build()
     storage.clear()
     assertNull(storage.get("wrong"))
   }

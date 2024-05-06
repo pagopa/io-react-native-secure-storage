@@ -9,6 +9,7 @@ import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeArray
 import com.facebook.react.bridge.WritableNativeMap
 import com.pagopa.securestorage.SecureStorage
+import com.pagopa.securestorage.SecureStorageException
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -16,8 +17,7 @@ import java.nio.charset.StandardCharsets
 class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
-  private var useStrongBox = true
-  private var useEncryption: Boolean? = null
+  private var forceManualEncryption: Boolean = false
   private val storageDir: File = File(reactContext.applicationContext.filesDir, "secure-storage")
 
   /**
@@ -28,10 +28,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   private val secureStorage: SecureStorage? by lazy {
     try {
       val secureStorage = SecureStorage.Builder(reactContext.applicationContext, storageDir)
-        .setUseStrongBox(useStrongBox)
-      if (useEncryption != null) {
-        secureStorage.setUseEncryption(useEncryption!!)
-      }
+        .setEnforceManualEncryption(forceManualEncryption)
       secureStorage.build()
     } catch (e: Exception) {
       null
@@ -43,20 +40,11 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   }
 
   /**
-   * @see [SecureStorage.Builder.setUseEncryption]
+   * @see [SecureStorage.Builder.setEnforceManualEncryption]
    */
   @ReactMethod
-  fun setUseEncryption(useEncryption: Boolean, promise: Promise) {
-    this.useEncryption = useEncryption
-    promise.resolve(null)
-  }
-
-  /**
-   * @see [SecureStorage.Builder.setUseStrongBox]
-   */
-  @ReactMethod
-  fun setUseStrongBox(useStrongBox: Boolean, promise: Promise) {
-    this.useStrongBox = useStrongBox
+  fun setEnforceManualEncryption(promise: Promise) {
+    this.forceManualEncryption = true
     promise.resolve(null)
   }
 

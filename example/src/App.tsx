@@ -18,50 +18,36 @@ const MAX_VALUE_LENGTH = 1000;
 
 const COLOR = 'blue';
 
+const BIG_VALUE = 'x'.repeat(2 * 1024 * 1024);
+
 export default function App() {
   const [key, setKey] = React.useState<string | undefined>();
   const [value, setValue] = React.useState<string | undefined>();
   const [status, setStatus] = React.useState<string | undefined>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [disableStrongBox, setDisableStrongBox] =
-    React.useState<boolean>(false);
   const [forceEncryption, setForceEncryption] = React.useState<boolean>(false);
 
   const RenderAndroidHeader = useCallback(
     () => (
       <View style={styles.marginBottom}>
         <View style={styles.checkbox}>
-          <Text>Disable StrongBox</Text>
-          <CheckBox
-            value={disableStrongBox}
-            onValueChange={async (newValue) => {
-              setDisableStrongBox(newValue);
-              await SecureStorage.setUseStrongBox(newValue);
-            }}
-            tintColors={{ true: COLOR, false: COLOR }}
-          />
-        </View>
-        <Text>
-          Note: StrongBox can be disabled only before the first operation. If
-          automatic encyrption is used then the value will be ignored.
-        </Text>
-        <View style={styles.checkbox}>
           <Text>Force manual encryption</Text>
           <CheckBox
             value={forceEncryption}
             onValueChange={async (newValue) => {
               setForceEncryption(newValue);
-              await SecureStorage.setUseEncryption(newValue);
+              await SecureStorage.setEnforceManualEncryption(newValue);
             }}
             tintColors={{ true: COLOR, false: COLOR }}
           />
         </View>
         <Text>
           Note: Manual encryption can be set only before the first operation.
+          Restart the app otherwise.
         </Text>
       </View>
     ),
-    [disableStrongBox, forceEncryption]
+    [forceEncryption]
   );
 
   const put = async () => {
@@ -69,13 +55,13 @@ export default function App() {
       try {
         setIsLoading(true);
         await SecureStorage.put(key, value);
-        setIsLoading(false);
         setStatus(`Value has been stored with key: ${key}`);
       } catch (e) {
         const error = e as SecureStorage.SecureStorageError;
-        setIsLoading(false);
         setStatus(`Error: ${error.message}`);
         console.log(JSON.stringify(e));
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setStatus('Key and Value are required');
@@ -87,7 +73,6 @@ export default function App() {
       try {
         setIsLoading(true);
         const result = await SecureStorage.get(key);
-        setIsLoading(false);
         if (result.length > MAX_VALUE_LENGTH) {
           setStatus(
             `Recovered value (sliced): ${result.slice(0, MAX_VALUE_LENGTH)}...`
@@ -98,9 +83,10 @@ export default function App() {
         console.log(JSON.stringify(result));
       } catch (e) {
         const error = e as SecureStorage.SecureStorageError;
-        setIsLoading(false);
         setStatus(`Error: ${error.message}`);
         console.log(JSON.stringify(e));
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setStatus('Key is required');
@@ -112,13 +98,13 @@ export default function App() {
       try {
         setIsLoading(true);
         await SecureStorage.remove(key);
-        setIsLoading(false);
         setStatus(`Deleted value with key: ${key}`);
       } catch (e) {
         const error = e as SecureStorage.SecureStorageError;
-        setIsLoading(false);
         setStatus(`Error: ${error.message}`);
         console.log(JSON.stringify(e));
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setStatus('Key is required');
@@ -129,13 +115,13 @@ export default function App() {
     try {
       setIsLoading(true);
       await SecureStorage.clear();
-      setIsLoading(false);
       setStatus('Cleared all values');
     } catch (e) {
       const error = e as SecureStorage.SecureStorageError;
-      setIsLoading(false);
       setStatus(`Error: ${error.message}`);
       console.log(JSON.stringify(e));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -143,18 +129,18 @@ export default function App() {
     try {
       setIsLoading(true);
       const res = await SecureStorage.keys();
-      setIsLoading(false);
       setStatus(`Keys: ${res}`);
     } catch (e) {
       const error = e as SecureStorage.SecureStorageError;
-      setIsLoading(false);
       setStatus(`Error: ${error.message}`);
       console.log(JSON.stringify(e));
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const setBigValue = () => {
-    setValue('x'.repeat(2 * 1024 * 1024));
+  const tests = async () => {
+    console.log('WIP');
   };
 
   return (
@@ -199,8 +185,12 @@ export default function App() {
           <Button
             title="Set 2MiB Value"
             color={COLOR}
-            onPress={() => setBigValue()}
+            onPress={() => setValue(BIG_VALUE)}
           />
+        </View>
+
+        <View style={[styles.buttons, styles.marginBottom]}>
+          <Button title="Run Tests" color={COLOR} onPress={() => tests()} />
         </View>
 
         {status && <Text>{status}</Text>}

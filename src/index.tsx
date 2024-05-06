@@ -22,6 +22,7 @@ const IoReactNativeSecureStorage = NativeModules.IoReactNativeSecureStorage
  * Error codes returned by the Android module.
  */
 type SecureStoragErrorCodesAndroid =
+  // UPDATE ME
   | 'GET_FAILED'
   | 'PUT_FAILED'
   | 'CLEAR_FAILED'
@@ -43,23 +44,15 @@ export type SecureStorageError = {
 
 /**
  * ANDROID ONLY
- * Sets if StrongBox has to be used or not. By default, this is always true when possible.
- * If this is manually set to true on devices which don't support it, TEE will be used
- * as fallback.
- * This has be called before any other method and will have no effect if called after the first put method.
- */
-export function setUseStrongBox(useStrongBox: boolean): Promise<void> {
-  return IoReactNativeSecureStorage.setUseStrongBox(useStrongBox);
-}
-
-/**
- * ANDROID ONLY
- * Sets if manual encryption has to be used or not. By default, the builder takes care of
+ * Enforces manual encryption. By default, the builder takes care of
  * using an appropriate useEncryption value according to the
  * provided storageDirectory which might be already encrypted on most devices.
+ * This has to be called before the very first operation, otherwise it won't have any effect.
+ * @param isEnforced true to enforce manual encryption, false otherwise.
+ * @return a promise that resolves.
  */
-export function setUseEncryption(useEncryption: boolean) {
-  return IoReactNativeSecureStorage.setUseEncryption(useEncryption);
+export function setEnforceManualEncryption(isEnforced: boolean): Promise<void> {
+  return IoReactNativeSecureStorage.setEnforceManualEncryption(isEnforced);
 }
 
 /**
