@@ -18,7 +18,7 @@ import kotlin.random.Random
 @RunWith(AndroidJUnit4::class)
 class SecureStorageInstrumentedTest {
   private val context = InstrumentationRegistry.getInstrumentation().targetContext
-  private val storageDir: File = File(context.dataDir, "instrumental-testing")
+  private val storageDir: File = File(context.filesDir, "instrumental-testing")
 
   /**
    * Tests a put and get method with automatic encryption.
@@ -112,6 +112,7 @@ class SecureStorageInstrumentedTest {
   @Test
   fun testClear() {
     val storage = SecureStorage.Builder(context, storageDir).build()
+    storage.clear()
     storage.put("test", byteArrayOf(1, 2, 3))
     assertEquals(1, storage.keys().size.toLong())
     storage.clear()

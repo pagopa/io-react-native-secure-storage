@@ -140,7 +140,16 @@ export default function App() {
   };
 
   const tests = async () => {
-    console.log('WIP');
+    try {
+      setIsLoading(true);
+      await SecureStorage.tests();
+    } catch (e) {
+      const error = e as SecureStorage.SecureStorageError;
+      setStatus(`Error: ${error.message}`);
+      console.log(JSON.stringify(e));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

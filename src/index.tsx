@@ -27,7 +27,8 @@ type SecureStoragErrorCodesAndroid =
   | 'PUT_FAILED'
   | 'CLEAR_FAILED'
   | 'KEYS_RETRIEVAL_FAILED'
-  | 'SECURE_STORE_NOT_INITIALIZED';
+  | 'SECURE_STORE_NOT_INITIALIZED'
+  | 'TEST_EXCEPTION';
 
 export type SecureStorageErrorCodes = SecureStoragErrorCodesAndroid;
 
@@ -111,4 +112,8 @@ export function remove(key: String): Promise<void> {
  */
 export function keys(): Promise<string[]> {
   return IoReactNativeSecureStorage.keys();
+}
+
+export function tests(): Promise<void> {
+  return IoReactNativeSecureStorage.tests();
 }
