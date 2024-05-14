@@ -26,6 +26,7 @@ type SecureStoragErrorCodesAndroid =
   | 'GET_FAILED'
   | 'PUT_FAILED'
   | 'CLEAR_FAILED'
+  | 'REMOVE_FAILED'
   | 'KEYS_RETRIEVAL_FAILED'
   | 'SECURE_STORE_NOT_INITIALIZED'
   | 'TEST_EXCEPTION';

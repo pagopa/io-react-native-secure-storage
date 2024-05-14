@@ -54,10 +54,15 @@ class SecureStorage private constructor(
    */
   fun remove(key: String) {
     try {
-      val file = AtomicFile(getFile(key))
-      file.delete()
+      val file = getFile(key)
+      if(file.exists()){
+        val atomicFile = AtomicFile(getFile(key))
+        atomicFile.delete()
+      }else{
+        throw SecureStorageException("File has not been found")
+      }
     } catch (e: Exception) {
-      throw SecureStorageException("File has not been found", e)
+      throw SecureStorageException("An error occurred while deleting the file", e)
     }
   }
 

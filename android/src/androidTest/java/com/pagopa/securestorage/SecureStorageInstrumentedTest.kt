@@ -5,6 +5,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -104,6 +105,8 @@ class SecureStorageInstrumentedTest {
     storage.put("test", byteArrayOf(1, 2, 3))
     storage.remove("test")
     assertNull(storage.get("test"))
+    // Trying to remove it twice should raise an exception
+    assertThrows(SecureStorageException::class.java) { storage.remove("test") }
   }
 
   /**

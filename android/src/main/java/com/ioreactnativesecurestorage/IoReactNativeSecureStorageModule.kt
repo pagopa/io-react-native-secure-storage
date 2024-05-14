@@ -131,7 +131,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
           promise
         )
       } catch (e: Exception) {
-        ModuleException.CLEAR_FAILED.reject(
+        ModuleException.REMOVE_FAILED.reject(
           promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
@@ -209,6 +209,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
       GET_FAILED(Exception("GET_FAILED")),
       PUT_FAILED(Exception("PUT_FAILED")),
       CLEAR_FAILED(Exception("CLEAR_FAILED")),
+      REMOVE_FAILED(Exception("REMOVE_FAILED")),
       KEYS_RETRIEVAL_FAILED(Exception("KEYS_RETRIEVAL_FAILED")),
       SECURE_STORE_NOT_INITIALIZED(Exception("SECURE_STORE_NOT_INITIALIZED")),
       TEST_EXCEPTION(Exception("TEST_EXCEPTION"));
