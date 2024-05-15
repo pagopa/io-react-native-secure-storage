@@ -58,7 +58,7 @@ public class SecureStorage {
     let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecAttrAccount: key] as [String: Any]
     let status = SecItemDelete(query as CFDictionary);
     let statusMessage = SecCopyErrorMessageString(status, nil) as? String
-    guard status == errSecSuccess else {
+    guard status == errSecSuccess || status == errSecItemNotFound else { //Ignore the errSecItemNotFound when calling remove with an invalid key
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
     }
   }
@@ -75,7 +75,7 @@ public class SecureStorage {
     }
   }
   
-  /// Returns the keys currently used to store data.
+  /// Returns an array of the keys in the secure storage.
   /// - Returns: an array of strings containing the keys currently used to store data. An empty array if there isn't any key.
   /// - Throws: An error of type `SecureStorageError` if the operation fails which wraps the message and the error code.
   public func keys() throws -> [String] {
