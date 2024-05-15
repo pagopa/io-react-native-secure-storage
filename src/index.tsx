@@ -58,63 +58,60 @@ export function setEnforceManualEncryption(isEnforced: boolean): Promise<void> {
 }
 
 /**
- * Puts [data] in a file in [storageDirectory].
- * The content of the file might be manually encrypted is [useEncryption] is true, otherwise
- * it won't be encrypted to avoid double encryption if [storageDirectory] is already encrypted.
- * The [Builder] class also allows to disable or enable it manually, thus making double
- * encryption or no encryption at all possible. With the default behavior the content will
- * always be encrypted, automatically if [storageDirectory] is already encrypted or manually
- * otherwise.
- * Manual encryption uses AES-128 GCM with hardware backed key for each file in [storageDirectory]
- * Automatic encryption possibly uses [file-based encryption](https://source.android.com/docs/security/features/encryption/file-based)
- * thus AES-256 in XTS mode for file content and AES-256 in CBC-CTS mode for file names.
- * @param key the identifier of the file.
+ * Puts the specified value mapped to the specified key in the secure storage.
+ * @param key the identifier of the data.
  * @param data the data to be written.
  * @return a promise that resolves when the data has been written or rejects with a [SecureStorageError] if an error occurs.
+ * @throws {@link SecureStorageException} if an error occurs while storing the data.
  */
 export function put(key: string, data: string): Promise<void> {
   return IoReactNativeSecureStorage.put(key, data);
 }
 
 /**
- * Gets the content of the file associated with [key].
- * This function checks whether or not the file has been manually encrypted or not by parsing
- * the first [PREFIX_ENCRYPTED_SIZE] bytes and comparing it with a known set of values.
- * If the file has been manually encrypted then it calls the decryption function, otherwise
- * it just reads the content of the file. See [put] for more information about encryption.
- * The prefix is stripped in both cases.
- * @param key the identifier of the file.
+ * Gets the value to which the key is mapped in the secure storage.
+ * @param key the identifier of the data.
  * @return a promise that resolves with the requested data or rejects with a [SecureStorageError] if an error occurs.
+ * @throws {@link SecureStorageException} if an error occurs while getting the data or if there's no data associated with the given key.
  */
 export function get(key: string): Promise<string> {
   return IoReactNativeSecureStorage.get(key);
 }
 
 /**
- * Clears every stored file.
+ * Clears every key and the corresponding data from the secure storage.
+ * @throws {@link SecureStorageException} if an error occurs while clearing the storage.
  */
 export function clear(): Promise<void> {
   return IoReactNativeSecureStorage.clear();
 }
 
 /**
- * Removes the file associated with the given [key].
- * @param key the identifier of the file.
+ * Removes the key and its corresponding data from the secure storage.
+ * @param key the identifier of the data.
  * @return a promise that resolves or rejects with a [SecureStorageError] if an error occurs.
+ * @throws {@link SecureStorageException} if an error occurs while removing the data or if there's no data associated with the given key.
  */
 export function remove(key: String): Promise<void> {
   return IoReactNativeSecureStorage.remove(key);
 }
 
 /**
- * Enumerates keys for each stored file.
+ * Enumarates the keys in the secure storage.
  * @return a promise that resolves containing each file name UTF-8 encoded or rejects with a [SecureStorageError] if an error occurs.
  * @throws SecureStorageException when UTF-8 encoding is not supported.
+ * @throws {@link SecureStorageException} if an error occurs while removing the data or if there's no data associated with the given key.
  */
 export function keys(): Promise<string[]> {
   return IoReactNativeSecureStorage.keys();
 }
 
+/**
+ * ANDROID ONLY
+ * Runs a test routine to check if the module is working correctly.
+ * @throws {@link SecureStorageException} if an error occurs during the test routine. Additional information about the failed test
+ * can be found in the exception's message.
+ */
 export function tests(): Promise<void> {
   return IoReactNativeSecureStorage.tests();
 }
