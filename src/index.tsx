@@ -17,21 +17,24 @@ const IoReactNativeSecureStorage = NativeModules.IoReactNativeSecureStorage
       }
     );
 
-/**
- * ANDROID ONLY
- * Error codes returned by the Android module.
- */
-type SecureStoragErrorCodesAndroid =
+type SecureStorageErrorCodesCommon =
   | 'VALUE_NOT_FOUND'
   | 'GET_FAILED'
   | 'PUT_FAILED'
   | 'CLEAR_FAILED'
   | 'REMOVE_FAILED'
-  | 'KEYS_RETRIEVAL_FAILED'
+  | 'KEYS_RETRIEVAL_FAILED';
+
+/**
+ * ANDROID ONLY
+ * Error codes returned by the Android module.
+ */
+type SecureStoragErrorCodesAndroid =
   | 'SECURE_STORE_NOT_INITIALIZED'
   | 'TEST_EXCEPTION';
 
-export type SecureStorageErrorCodes = SecureStoragErrorCodesAndroid;
+export type SecureStorageErrorCodes = SecureStorageErrorCodesCommon &
+  SecureStoragErrorCodesAndroid;
 
 /**
  * Error type returned by a rejected promise.
