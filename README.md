@@ -148,6 +148,7 @@ try {
 |          GET_FAILED          | iOS/Android | A critical error occurred during the get operation                      |
 |          PUT_FAILED          | iOS/Android | A critical error occurred during the put operation                      |
 |         CLEAR_FAILED         | iOS/Android | A critical error occurred during the clear operation                    |
+|        REMOVE_FAILED         | iOS/Android | A critical error occurred during the remove operation                   |
 |    KEYS_RETRIEVAL_FAILED     | iOS/Android | A critical error occurred during the keys operation                     |
 | SECURE_STORE_NOT_INITIALIZED |   Android   | A critical error occurred while initializaing the secure storage engine |
 |        TEST_EXCEPTION        |   Android   | A critical error occurred while running the test suite                  |
