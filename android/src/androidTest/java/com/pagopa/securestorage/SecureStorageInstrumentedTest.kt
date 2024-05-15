@@ -105,8 +105,8 @@ class SecureStorageInstrumentedTest {
     storage.put("test", byteArrayOf(1, 2, 3))
     storage.remove("test")
     assertNull(storage.get("test"))
-    // Trying to remove it twice should raise an exception
-    assertThrows(SecureStorageException::class.java) { storage.remove("test") }
+    // Trying to remove a non-existing element should do nothing
+    storage.remove("test")
   }
 
   /**

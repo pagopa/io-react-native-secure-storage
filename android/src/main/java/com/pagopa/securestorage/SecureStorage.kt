@@ -50,17 +50,12 @@ class SecureStorage private constructor(
   /**
    * Removes the file associated with the given [key].
    * @param key the identifier of the file.
-   * @throws SecureStorageException if the file associated with [key] has not been found.
+   * @throws SecureStorageException if an error occurs while deleting the file.
    */
   fun remove(key: String) {
     try {
-      val file = getFile(key)
-      if(file.exists()){
-        val atomicFile = AtomicFile(getFile(key))
-        atomicFile.delete()
-      }else{
-        throw SecureStorageException("File has not been found")
-      }
+      val atomicFile = AtomicFile(getFile(key))
+      atomicFile.delete()
     } catch (e: Exception) {
       throw SecureStorageException("An error occurred while deleting the file", e)
     }
@@ -394,7 +389,8 @@ class SecureStorage private constructor(
      * using an appropriate [useEncryption] value according to the
      * provided [storageDirectory] which might be already encrypted.
      */
-    fun setEnforceManualEncryption(isEnforced: Boolean) = apply { this.enforceManualEncryption = isEnforced }
+    fun setEnforceManualEncryption(isEnforced: Boolean) =
+      apply { this.enforceManualEncryption = isEnforced }
 
     /**
      * Builds an instance of [SecureStorage].

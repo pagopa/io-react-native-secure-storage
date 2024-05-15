@@ -6,7 +6,7 @@ import java.io.File
 import kotlin.random.Random
 
 /**
- * This class contains the very same tests as [SecureSTorageInstrumentedTest] which can be
+ * This class contains the very same tests as [SecureStorageInstrumentedTest] which can be
  * called directly from the react-native bridge.
  */
 class IoReactNativeSecureStorageTests(reactContext: ReactApplicationContext) {
