@@ -28,6 +28,12 @@ Instead of managing raw bytes array, the bridge handles UTF-8 encoded strings fo
 </manifest>
 ```
 
+## iOS
+
+The iOS implementation is based on the [Keychain service](https://developer.apple.com/documentation/security/keychain_services/).
+An instance of a secure storage can be created by providing a `serviceName`. It works as a grouping parameter for each entry stored by the instance.
+Entries are stored as [kSecClassGenericPassword](https://developer.apple.com/documentation/security/ksecclassgenericpassword) with [kSecAttrAccessibleWhenUnlockedThisDeviceOnly](https://developer.apple.com/documentation/security/ksecattraccessiblewhenunlockedthisdeviceonly) attribute which makes them accessible only while the device is unlocked.
+
 ## API
 
 ### `put`
