@@ -8,7 +8,7 @@ class IoReactNativeSecureStorage: NSObject {
   
   private let storage = SecureStorage(serviceName: "rn-secure-storage");
   
-  let queue = DispatchQueue(label: "my.queue")
+  let queue = DispatchQueue(label: "rn-secure-storage-queue")
   
   /// See ``SecureStorage/put(key:data:)``
   /// `data` is encoded in UTF-8.
