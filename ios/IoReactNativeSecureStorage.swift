@@ -101,6 +101,18 @@ class IoReactNativeSecureStorage: NSObject {
     }
   }
   
+  /// Not implemented in iOS, thus rejecting.
+  @objc(tests:withRejecter:)
+  func tests(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    ME.unsupportedDevice.reject(reject: reject)
+  }
+  
+  /// Not implemented in iOS, thus rejecting.
+  @objc(setEnforceManualEncryption:withResolver:withRejecter:)
+  func setEnforceManualEncryption(key: Bool, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) -> Void {
+    ME.unsupportedDevice.reject(reject: reject)
+  }
+  
   
   private enum ModuleException: String, CaseIterable {
     case valueNotFound = "VALUE_NOT_FOUND"
@@ -109,7 +121,7 @@ class IoReactNativeSecureStorage: NSObject {
     case clearFailed = "CLEAR_FAILED"
     case removeFailed = "REMOVE_FAILED"
     case keysRetrivialError = "KEYS_RETRIEVAL_FAILED"
-    case
+    case unsupportedDevice = "UNSUPPORTED_DEVICE"
     
     func error(userInfo: [String : Any]? = nil) -> NSError {
       switch self {
@@ -124,6 +136,8 @@ class IoReactNativeSecureStorage: NSObject {
       case .removeFailed:
         return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
       case .keysRetrivialError:
+        return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
+      case .unsupportedDevice:
         return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
       }
     }

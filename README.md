@@ -152,6 +152,7 @@ try {
 |    KEYS_RETRIEVAL_FAILED     | iOS/Android | A critical error occurred during the keys operation                     |
 | SECURE_STORE_NOT_INITIALIZED |   Android   | A critical error occurred while initializaing the secure storage engine |
 |        TEST_EXCEPTION        |   Android   | A critical error occurred while running the test suite                  |
+|      UNSUPPORTED_DEVICE      |     iOS     | The method is not supported on the device                               |
 
 ## Contributing
 
