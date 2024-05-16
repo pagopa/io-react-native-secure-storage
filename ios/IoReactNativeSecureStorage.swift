@@ -1,4 +1,7 @@
 @objc(IoReactNativeSecureStorage)
+
+/// React Native bridge which leverages ``SecureStorage`` functionality to store content securly via Keychain.
+/// Each string passed to the `put` and `get` is encoded in UTF-8.
 class IoReactNativeSecureStorage: NSObject {
   
   private typealias ME = ModuleException
