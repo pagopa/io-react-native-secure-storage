@@ -5,82 +5,94 @@ class IoReactNativeSecureStorage: NSObject {
   
   private let storage = SecureStorage(serviceName: "rn-secure-storage");
   
+  let queue = DispatchQueue(label: "my.queue")
+  
   /// See ``SecureStorage/put(key:data:)``
   /// `data` is encoded in UTF-8.
   @objc(put:withData:withResolver:withRejecter:)
-  func put(key: String, data: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-    do{
-      guard let strData = data.data(using: .utf8) else {
-        ME.putFailed.reject(reject: reject, ("error", "Error encoding data"))
-        return
+  func put(key: String, data: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    queue.async {
+      do{
+        guard let strData = data.data(using: .utf8) else {
+          ME.putFailed.reject(reject: reject, ("error", "Error encoding data"))
+          return
+        }
+        try self.storage.put(key: key, data: strData)
+        resolve(nil)
+      } catch let secureStorageErr as SecureStorageError {
+        ME.putFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
+      }catch{
+        ME.putFailed.reject(reject: reject, ("error", error.localizedDescription))
       }
-      try storage.put(key: key, data: strData)
-      resolve(nil)
-    } catch let secureStorageErr as SecureStorageError {
-      ME.putFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
-    }catch{
-      ME.putFailed.reject(reject: reject, ("error", error.localizedDescription))
     }
   }
   
   /// See ``SecureStorage/get()``
   /// Data received from the `get` function gets encoded in UTF-8.
   @objc(get:withResolver:withRejecter:)
-  func get(key: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-    do{
-      let data = try storage.get(key: key)
-      guard let isData = data else {
-        ME.valueNotFound.reject(reject: reject)
-        return
+  func get(key: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+    queue.async {
+      do{
+        let data = try self.storage.get(key: key)
+        guard let isData = data else {
+          ME.valueNotFound.reject(reject: reject)
+          return
+        }
+        guard let strData = String(data: isData, encoding: .utf8) else {
+          ME.getFailed.reject(reject: reject, ("error", "Error encoding data"))
+          return
+        }
+        resolve(strData)
+      } catch let secureStorageErr as SecureStorageError {
+        ME.getFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
+      }catch{
+        ME.getFailed.reject(reject: reject, ("error", error.localizedDescription))
       }
-      guard let strData = String(data: isData, encoding: .utf8) else {
-        ME.getFailed.reject(reject: reject, ("error", "Error encoding data"))
-        return
-      }
-      resolve(strData)
-    } catch let secureStorageErr as SecureStorageError {
-      ME.getFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
-    }catch{
-      ME.getFailed.reject(reject: reject, ("error", error.localizedDescription))
     }
   }
   
   /// See ``SecureStorage/remove()``
   @objc(remove:withResolver:withRejecter:)
-  func remove(key: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-    do{
-      try storage.remove(key: key)
-      resolve(nil)
-    }catch let secureStorageErr as SecureStorageError {
-      ME.removeFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
-    }catch{
-      ME.removeFailed.reject(reject: reject, ("error", error.localizedDescription))
+  func remove(key: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    queue.async {
+      do{
+        try self.storage.remove(key: key)
+        resolve(nil)
+      }catch let secureStorageErr as SecureStorageError {
+        ME.removeFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
+      }catch{
+        ME.removeFailed.reject(reject: reject, ("error", error.localizedDescription))
+      }
     }
   }
   
   /// See ``SecureStorage/clear()``
   @objc(clear:withRejecter:)
-  func clear(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-    do{
-      try storage.clear()
-      resolve(nil)
-    }catch let secureStorageErr as SecureStorageError {
-      ME.clearFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
-    }catch{
-      ME.clearFailed.reject(reject: reject, ("error", error.localizedDescription))
+  func clear(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    queue.async {
+      do{
+        try self.storage.clear()
+        resolve(nil)
+      }catch let secureStorageErr as SecureStorageError {
+        ME.clearFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
+      }catch{
+        ME.clearFailed.reject(reject: reject, ("error", error.localizedDescription))
+      }
     }
   }
   
   /// See ``SecureStorage/keys()``
   @objc(keys:withRejecter:)
-  func keys(resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
-    do{
-      let keys = try storage.keys()
-      resolve(keys)
-    }catch let secureStorageErr as SecureStorageError {
-      ME.keysRetrivialError.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
-    }catch{
-      ME.putFailed.reject(reject: reject, ("error", error.localizedDescription))
+  func keys(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+    queue.async {
+      do{
+        let keys = try self.storage.keys()
+        resolve(keys)
+      }catch let secureStorageErr as SecureStorageError {
+        ME.keysRetrivialError.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
+      }catch{
+        ME.putFailed.reject(reject: reject, ("error", error.localizedDescription))
+      }
     }
   }
   
