@@ -33,8 +33,9 @@ type SecureStoragErrorCodesAndroid =
   | 'SECURE_STORE_NOT_INITIALIZED'
   | 'TEST_EXCEPTION';
 
-export type SecureStorageErrorCodes = SecureStorageErrorCodesCommon &
-  SecureStoragErrorCodesAndroid;
+export type SecureStorageErrorCodes =
+  | SecureStorageErrorCodesCommon
+  | SecureStoragErrorCodesAndroid;
 
 /**
  * Error type returned by a rejected promise.
