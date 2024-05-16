@@ -50,15 +50,6 @@ export default function App() {
     [forceEncryption]
   );
 
-  const RenderAndroidTests = useCallback(
-    () => (
-      <View style={[styles.marginBottom]}>
-        <Button title="Run Tests" color={COLOR} onPress={() => tests()} />
-      </View>
-    ),
-    []
-  );
-
   const put = async () => {
     if (key && value) {
       try {
@@ -207,7 +198,9 @@ export default function App() {
           />
         </View>
 
-        {Platform.OS === 'android' && <RenderAndroidTests />}
+        <View style={[styles.marginBottom]}>
+          <Button title="Run Tests" color={COLOR} onPress={() => tests()} />
+        </View>
 
         {status && <Text>{status}</Text>}
         {isLoading && <ActivityIndicator />}
