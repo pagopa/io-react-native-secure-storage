@@ -109,7 +109,6 @@ class IoReactNativeSecureStorage: NSObject {
     case clearFailed = "CLEAR_FAILED"
     case removeFailed = "REMOVE_FAILED"
     case keysRetrivialError = "KEYS_RETRIEVAL_FAILED"
-    case
     
     func error(userInfo: [String : Any]? = nil) -> NSError {
       switch self {
