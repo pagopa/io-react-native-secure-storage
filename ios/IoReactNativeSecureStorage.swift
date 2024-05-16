@@ -1,6 +1,8 @@
 @objc(IoReactNativeSecureStorage)
 
 /// React Native bridge which leverages ``SecureStorage`` functionality to store content securly via Keychain.
+/// Methods are run in a custom serial queue to syncronize access to the Keychain, thus only one block can run at any time to
+/// syncronize the Keychain access.
 /// Each string passed to the `put` and `get` is encoded in UTF-8.
 class IoReactNativeSecureStorage: NSObject {
   
@@ -107,7 +109,7 @@ class IoReactNativeSecureStorage: NSObject {
     case clearFailed = "CLEAR_FAILED"
     case removeFailed = "REMOVE_FAILED"
     case keysRetrivialError = "KEYS_RETRIEVAL_FAILED"
-    case testException = "TEST_EXCEPTION"
+    case
     
     func error(userInfo: [String : Any]? = nil) -> NSError {
       switch self {
@@ -122,8 +124,6 @@ class IoReactNativeSecureStorage: NSObject {
       case .removeFailed:
         return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
       case .keysRetrivialError:
-        return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
-      case .testException:
         return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
       }
     }
