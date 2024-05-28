@@ -121,7 +121,7 @@ try {
 
 ### `tests` (Android Only)
 
-This method runs a test suite on Android to check if the library is working correctly. [SecuraStorageInstrumentedTest.kt] already contains an instrumented test suite which can be run through Android Studio. However, this method is useful for running tests from the JavaScript side.
+This method runs a test suite on Android to check if the library is working correctly. `SecuraStorageInstrumentedTest.kt` already contains an instrumented test suite which can be run through Android Studio. However, this method is useful for running tests from the JavaScript side.
 
 ```ts
 try {
