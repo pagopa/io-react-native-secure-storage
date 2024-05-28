@@ -77,17 +77,16 @@ class SecureStorage private constructor(
    */
   fun keys(): List<String> {
     return storageDirectory.listFiles()?.filter { it.name.startsWith(PREFIX) }
-      ?.map {
+      ?.map {file ->
         try {
-          URLDecoder.decode(it.name.substring(PREFIX.length), "UTF-8")
+          URLDecoder.decode(file.name.substring(PREFIX.length), "UTF-8")
         } catch (e: UnsupportedEncodingException) {
           throw SecureStorageException(
             "UTF-8 encoding is not supported",
             e
           )
         }
-      }
-      ?.toList() ?: emptyList()
+      } ?: emptyList()
   }
 
   /**
