@@ -56,8 +56,8 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun put(key: String, data: String, promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          it.put(key, data.toByteArray())
+        secureStorage?.run {
+          put(key, data.toByteArray())
           promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
