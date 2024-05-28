@@ -104,31 +104,27 @@ class SecureStorage private constructor(
    * when the file has an unrecognized prefix, or when an unexpected error occurs.
    */
   fun get(key: String): ByteArray? {
-    return try {
+    return runCatching {
       val file = AtomicFile(getFile(key))
       val data = file.readFully()
       check(data.size >= PREFIX_ENCRYPTED_SIZE) { "File must be bigger than $PREFIX_ENCRYPTED_SIZE bytes" }
       val prefix = data.copyOfRange(0, PREFIX_ENCRYPTED_SIZE)
       when {
         prefix.contentEquals(MANUAL_ENCRYPTED) -> {
-          getSecretKey()?.let {
-            decrypt(
-              it,
-              data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size)
-            )
+          getSecretKey()?.let { key ->
+            decrypt(key, data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size))
           }
         }
-
         prefix.contentEquals(AUTOMATIC_ENCRYPTED) -> {
           data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size)
         }
-
         else -> throw IllegalStateException("Unrecognized file prefix")
       }
-    } catch (e: FileNotFoundException) {
-      null
-    } catch (e: Exception) {
-      throw SecureStorageException("Unexpected exception", e)
+    }.getOrElse { e ->
+      when (e) {
+        is FileNotFoundException -> null
+        else -> throw SecureStorageException("Unexpected exception", e)
+      }
     }
   }
 
