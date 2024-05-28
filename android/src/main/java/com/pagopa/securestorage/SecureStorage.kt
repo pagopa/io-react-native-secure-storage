@@ -65,11 +65,9 @@ class SecureStorage private constructor(
    * Clears [storageDirectory] from every file.
    */
   fun clear() {
-    storageDirectory.listFiles()?.let { fileList ->
-      fileList
-        .filter { it.name.startsWith(PREFIX) }
-        .forEach { it.delete() }
-    }
+      storageDirectory.listFiles()
+          ?.filter { it.name.startsWith(PREFIX) }
+          ?.forEach { it.delete() }
   }
 
   /**
