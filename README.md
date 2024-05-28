@@ -22,7 +22,7 @@ Instead of managing raw bytes array, the bridge handles UTF-8 encoded strings fo
 ```xml
 <manifest ... >
     ...
-    <application android:allowBackup="true" ... >
+    <application android:allowBackup="false" ... >
         ...
     </application>
 </manifest>
