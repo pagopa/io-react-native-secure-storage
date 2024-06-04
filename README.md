@@ -98,6 +98,7 @@ Returns an array of all keys in the storage.
 ```ts
 try {
   const keys = await SecureStorage.keys();
+  console.log(keys);
 } catch (e) {
   const error = e as SecureStorage.SecureStorageError;
   setStatus(`Error: ${error.message}`);
@@ -111,7 +112,8 @@ This method enables manual encryption on Android. It should be called before any
 
 ```ts
 try {
-  const keys = await SecureStorage.keys();
+  await SecureStorage.setEnforceManualEncryption();
+  [...]
 } catch (e) {
   const error = e as SecureStorage.SecureStorageError;
   setStatus(`Error: ${error.message}`);
