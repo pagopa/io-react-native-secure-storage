@@ -39,6 +39,11 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
+  private fun performSecureAction(promise: Promise, action: SecureStorage.() -> Unit) {
+    secureStorage?.run(action) ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(promise)
+  }
+
+
   /**
    * @see [SecureStorage.Builder.setEnforceManualEncryption]
    */
@@ -56,12 +61,10 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun put(key: String, data: String, promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          it.put(key, data.toByteArray())
+        performSecureAction(promise) {
+          put(key, data.toByteArray())
           promise.resolve(null)
-        } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
-          promise
-        )
+        }
       } catch (e: Exception) {
         ModuleException.PUT_FAILED.reject(
           promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
@@ -78,14 +81,12 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun get(key: String, promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          val result = it.get(key)
-          result?.let {
-            promise.resolve(result.toString(StandardCharsets.UTF_8))
+        performSecureAction(promise) {
+          val value = get(key)
+          value?.let {
+            promise.resolve(it.toString(StandardCharsets.UTF_8))
           } ?: ModuleException.VALUE_NOT_FOUND.reject(promise)
-        } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
-          promise
-        )
+        }
       } catch (e: Exception) {
         ModuleException.GET_FAILED.reject(
           promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
@@ -102,12 +103,10 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun clear(promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          it.clear()
+        performSecureAction(promise) {
+          clear()
           promise.resolve(null)
-        } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
-          promise
-        )
+        }
       } catch (e: Exception) {
         ModuleException.CLEAR_FAILED.reject(
           promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
@@ -124,12 +123,10 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun remove(key: String, promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          it.remove(key)
+        performSecureAction(promise) {
+          remove(key)
           promise.resolve(null)
-        } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
-          promise
-        )
+        }
       } catch (e: Exception) {
         ModuleException.REMOVE_FAILED.reject(
           promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
@@ -144,16 +141,14 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun keys(promise: Promise) {
     try {
-      secureStorage?.let {
+      performSecureAction(promise) {
         val result: WritableArray = WritableNativeArray()
-        var keys = it.keys()
+        val keys = keys()
         for (key in keys) {
           result.pushString(key)
         }
         promise.resolve(result)
-      } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
-        promise
-      )
+      }
     } catch (e: Exception) {
       ModuleException.KEYS_RETRIEVAL_FAILED.reject(
         promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
@@ -194,9 +189,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
    * @param e an exception.
    * @return [e] message field or an empty string otherwise.
    */
-  private fun getExceptionMessageOrEmpty(e: Exception): String {
-    return e.message ?: ""
-  }
+  private fun getExceptionMessageOrEmpty(e: Exception): String = e.message ?: ""
 
   companion object {
     const val NAME = "IoReactNativeSecureStorage"

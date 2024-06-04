@@ -34,18 +34,10 @@ import javax.crypto.spec.GCMParameterSpec
  * @property useEncryption if manual encryption has to be used.
  */
 class SecureStorage private constructor(
-  context: Context, storageDirectory: File, useEncryption: Boolean
-) {
-
-  private val context: Context
-  private val storageDirectory: File
+  private val context: Context,
+  private val storageDirectory: File,
   private val useEncryption: Boolean
-
-  init {
-    this.context = context
-    this.storageDirectory = storageDirectory
-    this.useEncryption = useEncryption
-  }
+) {
 
   /**
    * Removes the file associated with the given [key].
@@ -65,11 +57,9 @@ class SecureStorage private constructor(
    * Clears [storageDirectory] from every file.
    */
   fun clear() {
-    storageDirectory.listFiles()?.let { fileList ->
-      fileList
-        .filter { it.name.startsWith(PREFIX) }
-        .forEach { it.delete() }
-    }
+    storageDirectory.listFiles()
+      ?.filter { it.name.startsWith(PREFIX) }
+      ?.forEach { it.delete() }
   }
 
   /**
@@ -79,17 +69,16 @@ class SecureStorage private constructor(
    */
   fun keys(): List<String> {
     return storageDirectory.listFiles()?.filter { it.name.startsWith(PREFIX) }
-      ?.map {
+      ?.map { file ->
         try {
-          URLDecoder.decode(it.name.substring(PREFIX.length), "UTF-8")
+          URLDecoder.decode(file.name.substring(PREFIX.length), "UTF-8")
         } catch (e: UnsupportedEncodingException) {
           throw SecureStorageException(
             "UTF-8 encoding is not supported",
             e
           )
         }
-      }
-      ?.toList() ?: emptyList()
+      } ?: emptyList()
   }
 
   /**
@@ -107,18 +96,15 @@ class SecureStorage private constructor(
    * when the file has an unrecognized prefix, or when an unexpected error occurs.
    */
   fun get(key: String): ByteArray? {
-    return try {
+    return runCatching {
       val file = AtomicFile(getFile(key))
       val data = file.readFully()
       check(data.size >= PREFIX_ENCRYPTED_SIZE) { "File must be bigger than $PREFIX_ENCRYPTED_SIZE bytes" }
       val prefix = data.copyOfRange(0, PREFIX_ENCRYPTED_SIZE)
       when {
         prefix.contentEquals(MANUAL_ENCRYPTED) -> {
-          getSecretKey()?.let {
-            decrypt(
-              it,
-              data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size)
-            )
+          getSecretKey()?.let { key ->
+            decrypt(key, data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size))
           }
         }
 
@@ -128,10 +114,11 @@ class SecureStorage private constructor(
 
         else -> throw IllegalStateException("Unrecognized file prefix")
       }
-    } catch (e: FileNotFoundException) {
-      null
-    } catch (e: Exception) {
-      throw SecureStorageException("Unexpected exception", e)
+    }.getOrElse { e ->
+      when (e) {
+        is FileNotFoundException -> null
+        else -> throw SecureStorageException("Unexpected exception", e)
+      }
     }
   }
 
@@ -162,8 +149,8 @@ class SecureStorage private constructor(
       try {
         outputStream = file.startWrite()
         if (useEncryption) {
-          var secretKey = getSecretKey() ?: generateHardwareBackedSecretKey()
-          if (!isKeyHardwareBacked(secretKey!!)) throw IllegalStateException("Hardware backed keys not supported")
+          val secretKey = getSecretKey() ?: generateHardwareBackedSecretKey()
+          if (!isKeyHardwareBacked(secretKey)) throw IllegalStateException("Hardware backed keys not supported")
           outputStream.write(MANUAL_ENCRYPTED)
           outputStream.write(encrypt(secretKey, data))
         } else {
@@ -288,7 +275,7 @@ class SecureStorage private constructor(
         val cipherText = encryptedData.copyOfRange(GCM_IV_LENGTH, encryptedData.size)
         val cipher = Cipher.getInstance(CIPHER_TYPE)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
-        var result = ByteArrayOutputStream()
+        val result = ByteArrayOutputStream()
         var isLastChunk = false
         // We track how many bytes we already read
         var offset = 0

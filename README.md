@@ -22,7 +22,7 @@ Instead of managing raw bytes array, the bridge handles UTF-8 encoded strings fo
 ```xml
 <manifest ... >
     ...
-    <application android:allowBackup="true" ... >
+    <application android:allowBackup="false" ... >
         ...
     </application>
 </manifest>
@@ -103,6 +103,7 @@ Returns an array of all keys in the storage.
 ```ts
 try {
   const keys = await SecureStorage.keys();
+  console.log(keys);
 } catch (e) {
   const error = e as SecureStorage.SecureStorageError;
   setStatus(`Error: ${error.message}`);
@@ -116,7 +117,8 @@ This method enables manual encryption on Android. It should be called before any
 
 ```ts
 try {
-  const keys = await SecureStorage.keys();
+  await SecureStorage.setEnforceManualEncryption();
+  [...]
 } catch (e) {
   const error = e as SecureStorage.SecureStorageError;
   setStatus(`Error: ${error.message}`);
@@ -126,7 +128,7 @@ try {
 
 ### `tests` (Android Only)
 
-This method runs a test suite on Android to check if the library is working correctly. [SecuraStorageInstrumentedTest.kt] already contains an instrumented test suite which can be run through Android Studio. However, this method is useful for running tests from the JavaScript side.
+This method runs a test suite on Android to check if the library is working correctly. `SecuraStorageInstrumentedTest.kt` already contains an instrumented test suite which can be run through Android Studio. However, this method is useful for running tests from the JavaScript side.
 
 ```ts
 try {
