@@ -155,7 +155,7 @@ class SecureStorage private constructor(
       try {
         outputStream = file.startWrite()
         if (useEncryption) {
-          var secretKey = getSecretKey() ?: generateHardwareBackedSecretKey()
+          val secretKey = getSecretKey() ?: generateHardwareBackedSecretKey()
           if (!isKeyHardwareBacked(secretKey!!)) throw IllegalStateException("Hardware backed keys not supported")
           outputStream.write(MANUAL_ENCRYPTED)
           outputStream.write(encrypt(secretKey, data))
