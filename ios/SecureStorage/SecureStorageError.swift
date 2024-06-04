@@ -6,7 +6,10 @@ public struct SecureStorageError: LocalizedError {
   var description: String
   var code: Int
   
-  init(description: String, code: Int = 0) {
+  init(
+    description: String,
+    code: Int = 0
+  ) {
     self.description = description
     self.code = code
   }

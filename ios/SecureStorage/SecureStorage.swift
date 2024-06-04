@@ -20,7 +20,10 @@ public class SecureStorage {
   ///   - key: the identifier of the data. Part of the primary key along with the provided `serviceName`.
   ///   - data: the data to be saved in the Keychain.
   /// - Throws: An error of type `SecureStorageError` if the operation fails which wraps the message and the error code.
-  public func put(key: String, data: Data) throws {
+  public func put(
+    key: String,
+    data: Data
+  ) throws {
     var query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecAttrAccount: key, kSecValueData: data, kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly] as [String: Any]
     var status = SecItemAdd(query as CFDictionary, nil)
     if status == errSecDuplicateItem { // We overwrite the duplicate
@@ -38,7 +41,9 @@ public class SecureStorage {
   /// - Parameter key: the identifier of the data to be retrieved.
   /// - Returns: the data associated with `key`, `nil` if it can't be found.
   /// - Throws: An error of type `SecureStorageError` if the operation fails which wraps the message and the error code.
-  public func get(key: String) throws -> Data? {
+  public func get(
+    key: String
+  ) throws -> Data? {
     let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecReturnData: true, kSecAttrAccount: key] as [String: Any]
     var result: CFTypeRef?
     let status = SecItemCopyMatching(query as CFDictionary, &result)
@@ -54,7 +59,9 @@ public class SecureStorage {
   /// Removes a previously stored data.
   /// - Parameter key: the key of the data to be removed.
   /// - Throws: An error of type `SecureStorageError` if the operation fails which wraps the message and the error code.
-  public func remove(key: String) throws {
+  public func remove(
+    key: String
+  ) throws {
     let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecAttrAccount: key] as [String: Any]
     let status = SecItemDelete(query as CFDictionary);
     let statusMessage = SecCopyErrorMessageString(status, nil) as? String

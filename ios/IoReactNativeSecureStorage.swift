@@ -15,7 +15,12 @@ class IoReactNativeSecureStorage: NSObject {
   /// See ``SecureStorage/put(key:data:)``
   /// `data` is encoded in UTF-8.
   @objc(put:withData:withResolver:withRejecter:)
-  func put(key: String, data: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func put(
+    key: String,
+    data: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
     queue.async {
       do{
         guard let strData = data.data(using: .utf8) else {
@@ -35,7 +40,11 @@ class IoReactNativeSecureStorage: NSObject {
   /// See ``SecureStorage/get()``
   /// Data received from the `get` function gets encoded in UTF-8.
   @objc(get:withResolver:withRejecter:)
-  func get(key: String, resolve: @escaping RCTPromiseResolveBlock,reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func get(
+    key: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
     queue.async {
       do{
         let data = try self.storage.get(key: key)
@@ -58,7 +67,11 @@ class IoReactNativeSecureStorage: NSObject {
   
   /// See ``SecureStorage/remove()``
   @objc(remove:withResolver:withRejecter:)
-  func remove(key: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func remove(
+    key: String,
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
     queue.async {
       do{
         try self.storage.remove(key: key)
@@ -73,7 +86,10 @@ class IoReactNativeSecureStorage: NSObject {
   
   /// See ``SecureStorage/clear()``
   @objc(clear:withRejecter:)
-  func clear(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func clear(
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
     queue.async {
       do{
         try self.storage.clear()
@@ -88,7 +104,10 @@ class IoReactNativeSecureStorage: NSObject {
   
   /// See ``SecureStorage/keys()``
   @objc(keys:withRejecter:)
-  func keys(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
+  func keys(
+    resolve: @escaping RCTPromiseResolveBlock,
+    reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
     queue.async {
       do{
         let keys = try self.storage.keys()
@@ -110,7 +129,9 @@ class IoReactNativeSecureStorage: NSObject {
     case removeFailed = "REMOVE_FAILED"
     case keysRetrivialError = "KEYS_RETRIEVAL_FAILED"
     
-    func error(userInfo: [String : Any]? = nil) -> NSError {
+    func error(
+      userInfo: [String : Any]? = nil
+    ) -> NSError {
       switch self {
       case .valueNotFound:
         return NSError(domain: self.rawValue, code: -1, userInfo: userInfo)
@@ -130,7 +151,10 @@ class IoReactNativeSecureStorage: NSObject {
     /// Rejects the provided promise with the appropriate error message and additional data.
     /// - Parameter reject  the promise to be rejected.
     /// - Parameter moreUserInfo additional key-value pairs of data to be passed along with the error.
-    func reject(reject: RCTPromiseRejectBlock, _ moreUserInfo: (String, Any)...) {
+    func reject(
+      reject: RCTPromiseRejectBlock,
+      _ moreUserInfo: (String, Any)...
+    ) {
       var userInfo = [String : Any]()
       moreUserInfo.forEach { userInfo[$0.0] = $0.1 }
       let error = error(userInfo: userInfo)
