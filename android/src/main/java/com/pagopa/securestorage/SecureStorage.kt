@@ -57,9 +57,9 @@ class SecureStorage private constructor(
    * Clears [storageDirectory] from every file.
    */
   fun clear() {
-      storageDirectory.listFiles()
-          ?.filter { it.name.startsWith(PREFIX) }
-          ?.forEach { it.delete() }
+    storageDirectory.listFiles()
+      ?.filter { it.name.startsWith(PREFIX) }
+      ?.forEach { it.delete() }
   }
 
   /**
@@ -69,7 +69,7 @@ class SecureStorage private constructor(
    */
   fun keys(): List<String> {
     return storageDirectory.listFiles()?.filter { it.name.startsWith(PREFIX) }
-      ?.map {file ->
+      ?.map { file ->
         try {
           URLDecoder.decode(file.name.substring(PREFIX.length), "UTF-8")
         } catch (e: UnsupportedEncodingException) {
@@ -107,9 +107,11 @@ class SecureStorage private constructor(
             decrypt(key, data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size))
           }
         }
+
         prefix.contentEquals(AUTOMATIC_ENCRYPTED) -> {
           data.copyOfRange(PREFIX_ENCRYPTED_SIZE, data.size)
         }
+
         else -> throw IllegalStateException("Unrecognized file prefix")
       }
     }.getOrElse { e ->

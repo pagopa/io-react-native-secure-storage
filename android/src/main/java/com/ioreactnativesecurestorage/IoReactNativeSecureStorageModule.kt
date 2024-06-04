@@ -194,7 +194,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
    * @param e an exception.
    * @return [e] message field or an empty string otherwise.
    */
-private fun getExceptionMessageOrEmpty(e: Exception): String = e.message ?: ""
+  private fun getExceptionMessageOrEmpty(e: Exception): String = e.message ?: ""
 
   companion object {
     const val NAME = "IoReactNativeSecureStorage"
