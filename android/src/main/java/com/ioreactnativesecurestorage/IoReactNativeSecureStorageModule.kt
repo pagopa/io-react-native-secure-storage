@@ -80,7 +80,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
       try {
         secureStorage?.run {
           val value = get(key)
-          value?.let { 
+          value?.let {
             promise.resolve(it.toString(StandardCharsets.UTF_8))
           } ?: ModuleException.VALUE_NOT_FOUND.reject(promise)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
@@ -102,8 +102,8 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun clear(promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          it.clear()
+        secureStorage?.run {
+          clear()
           promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
@@ -124,8 +124,8 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun remove(key: String, promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          it.remove(key)
+        secureStorage?.run {
+          remove(key)
           promise.resolve(null)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
@@ -144,9 +144,9 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   @ReactMethod
   fun keys(promise: Promise) {
     try {
-      secureStorage?.let {
+      secureStorage?.run {
         val result: WritableArray = WritableNativeArray()
-        val keys = it.keys()
+        val keys = keys()
         for (key in keys) {
           result.pushString(key)
         }
