@@ -281,7 +281,7 @@ class SecureStorage private constructor(
         val cipherText = encryptedData.copyOfRange(GCM_IV_LENGTH, encryptedData.size)
         val cipher = Cipher.getInstance(CIPHER_TYPE)
         cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
-        var result = ByteArrayOutputStream()
+        val result = ByteArrayOutputStream()
         var isLastChunk = false
         // We track how many bytes we already read
         var offset = 0
