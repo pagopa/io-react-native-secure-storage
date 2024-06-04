@@ -146,7 +146,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
     try {
       secureStorage?.let {
         val result: WritableArray = WritableNativeArray()
-        var keys = it.keys()
+        val keys = it.keys()
         for (key in keys) {
           result.pushString(key)
         }
