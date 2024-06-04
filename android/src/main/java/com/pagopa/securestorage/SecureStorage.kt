@@ -34,18 +34,10 @@ import javax.crypto.spec.GCMParameterSpec
  * @property useEncryption if manual encryption has to be used.
  */
 class SecureStorage private constructor(
-  context: Context, storageDirectory: File, useEncryption: Boolean
-) {
-
-  private val context: Context
-  private val storageDirectory: File
+  private val context: Context,
+  private val storageDirectory: File,
   private val useEncryption: Boolean
-
-  init {
-    this.context = context
-    this.storageDirectory = storageDirectory
-    this.useEncryption = useEncryption
-  }
+) {
 
   /**
    * Removes the file associated with the given [key].
