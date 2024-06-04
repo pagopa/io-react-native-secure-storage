@@ -78,10 +78,10 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
   fun get(key: String, promise: Promise) {
     Thread {
       try {
-        secureStorage?.let {
-          val result = it.get(key)
-          result?.let {
-            promise.resolve(result.toString(StandardCharsets.UTF_8))
+        secureStorage?.run {
+          val value = get(key)
+          value?.let { 
+            promise.resolve(it.toString(StandardCharsets.UTF_8))
           } ?: ModuleException.VALUE_NOT_FOUND.reject(promise)
         } ?: ModuleException.SECURE_STORE_NOT_INITIALIZED.reject(
           promise
