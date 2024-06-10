@@ -85,7 +85,10 @@ public class SecureStorage {
   /// Clears any value previsously stored.
   /// - Throws: An error of type `SecureStorageError` if the operation fails which wraps the message and the error code.
   public func clear() throws {
-    let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName] as [String: Any]
+    let query: [String: Any] = [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrService: serviceName
+    ] as [String: Any]
     let status = SecItemDelete(query as CFDictionary);
     guard status == errSecSuccess || status == errSecItemNotFound else { //Ignore the errSecItemNotFound when calling clear on an empty keychain
       let statusMessage = SecCopyErrorMessageString(status, nil) as? String
