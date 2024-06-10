@@ -95,11 +95,14 @@ public class SecureStorage {
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
     }
     
-    return (result as? [[String: Any]])?.compactMap {
-      guard let account = $0[kSecAttrAccount as String] as? String else {
-        return nil // Skip if kSecAttrAccount is not a String
-      }
-      return account
-    } ?? []
+    if let resultArray = result as? [[String: Any]] {
+        return resultArray.compactMap { item in
+            guard let account = item[kSecAttrAccount as String] as? String else {
+                return nil // Skip if kSecAttrAccount is not a String
+            }
+            return account
+        }
+    }
+    return []
   }
 }
