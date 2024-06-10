@@ -47,12 +47,11 @@ class IoReactNativeSecureStorage: NSObject {
   ) -> Void {
     queue.async {
       do{
-        let data = try self.storage.get(key: key)
-        guard let isData = data else {
+        guard let data = try self.storage.get(key: key) else {
           ME.valueNotFound.reject(reject: reject)
           return
         }
-        guard let strData = String(data: isData, encoding: .utf8) else {
+        guard let strData = String(data: data, encoding: .utf8) else {
           ME.getFailed.reject(reject: reject, ("error", "Error encoding data"))
           return
         }
