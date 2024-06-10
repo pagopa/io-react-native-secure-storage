@@ -24,15 +24,25 @@ public class SecureStorage {
     key: String,
     data: Data
   ) throws {
-    var query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecAttrAccount: key, kSecValueData: data, kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly] as [String: Any]
+    var query: [String: Any] = [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrService: serviceName,
+      kSecAttrAccount: key,
+      kSecValueData: data,
+      kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+    ] as [String: Any]
     var status = SecItemAdd(query as CFDictionary, nil)
     if status == errSecDuplicateItem { // We overwrite the duplicate
-      let updated = [kSecValueData: query[kSecValueData as String] as! Data] as [String: Any]
-      query = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecAttrAccount: key] as [String: Any]
+      let updated = [kSecValueData: query[kSecValueData as String]]
+      query = [
+        kSecClass: kSecClassGenericPassword,
+        kSecAttrService: serviceName,
+        kSecAttrAccount: key
+      ] as [String: Any]
       status = SecItemUpdate(query as CFDictionary, updated as CFDictionary)
     }
-    let statusMessage = SecCopyErrorMessageString(status, nil) as? String
     guard status == errSecSuccess else {
+      let statusMessage = SecCopyErrorMessageString(status, nil) as? String
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
     }
   }
