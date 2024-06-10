@@ -52,7 +52,9 @@ public class SecureStorage {
     ] as [String: Any]
     var result: CFTypeRef?
     let status = SecItemCopyMatching(query as CFDictionary, &result)
-    if status == errSecItemNotFound { return nil }
+    if status == errSecItemNotFound {
+        return nil
+    }
     let statusMessage = SecCopyErrorMessageString(status, nil) as? String
     guard status == errSecSuccess else {
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
