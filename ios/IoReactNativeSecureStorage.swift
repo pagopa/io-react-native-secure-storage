@@ -154,8 +154,7 @@ class IoReactNativeSecureStorage: NSObject {
       reject: RCTPromiseRejectBlock,
       _ moreUserInfo: (String, Any)...
     ) {
-      var userInfo = [String : Any]()
-      moreUserInfo.forEach { userInfo[$0.0] = $0.1 }
+      let userInfo = [String: Any](uniqueKeysWithValues: moreUserInfo)
       let error = error(userInfo: userInfo)
       reject("\(error.code)", error.domain, error)
     }
