@@ -75,8 +75,8 @@ public class SecureStorage {
       kSecAttrAccount: key
     ] as [String: Any]
     let status = SecItemDelete(query as CFDictionary);
-    let statusMessage = SecCopyErrorMessageString(status, nil) as? String
     guard status == errSecSuccess || status == errSecItemNotFound else { //Ignore the errSecItemNotFound when calling remove with an invalid key
+      let statusMessage = SecCopyErrorMessageString(status, nil) as? String
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
     }
   }
