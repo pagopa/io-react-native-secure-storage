@@ -67,7 +67,11 @@ public class SecureStorage {
   public func remove(
     key: String
   ) throws {
-    let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecAttrAccount: key] as [String: Any]
+    let query: [String: Any] = [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrService: serviceName,
+      kSecAttrAccount: key
+    ] as [String: Any]
     let status = SecItemDelete(query as CFDictionary);
     let statusMessage = SecCopyErrorMessageString(status, nil) as? String
     guard status == errSecSuccess || status == errSecItemNotFound else { //Ignore the errSecItemNotFound when calling remove with an invalid key
