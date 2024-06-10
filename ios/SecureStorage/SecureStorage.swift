@@ -3,14 +3,14 @@ import Foundation
 
 /// Implements a secure storage based on iOS [Keychain services](https://developer.apple.com/documentation/security/keychain_services/)
 public class SecureStorage {
+  /// The service name value groups the credentials stored in the keychain from the object of  ``SecureStorage``
+  public let serviceName: String
+  
   /// Creates a new instance of the ``SecureStorage`` class.
   /// - Parameter serviceName: value which concur as part of the primary key for each storage item. Groups the credentials stored from this instance.
   public init(serviceName: String) {
     self.serviceName = serviceName
   }
-  
-  /// The service name value groups the credentials stored in the keychain from the object of  ``SecureStorage``
-  public var serviceName: String
   
   /// Puts a new value in the Keychain or overwrites it if a value already exists for the given `key`.
   /// `data` is stored as a `kSecClassGenericPassword` with  ``serviceName`` as `kSecAttrService`  and  `key` as `kSecAttrAccount`
