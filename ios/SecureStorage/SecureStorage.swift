@@ -55,8 +55,8 @@ public class SecureStorage {
     if status == errSecItemNotFound {
         return nil
     }
-    let statusMessage = SecCopyErrorMessageString(status, nil) as? String
     guard status == errSecSuccess else {
+      let statusMessage = SecCopyErrorMessageString(status, nil) as? String
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
     }
     return result as? Data
