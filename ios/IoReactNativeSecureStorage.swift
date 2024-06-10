@@ -75,7 +75,7 @@ class IoReactNativeSecureStorage: NSObject {
       do{
         try self.storage.remove(key: key)
         resolve(nil)
-      }catch let secureStorageErr as SecureStorageError {
+      } catch let secureStorageErr as SecureStorageError {
         ME.removeFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
       } catch {
         ME.removeFailed.reject(reject: reject, ("error", error.localizedDescription))
