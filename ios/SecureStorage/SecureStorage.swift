@@ -63,7 +63,7 @@ public class SecureStorage {
     var result: CFTypeRef?
     let status = SecItemCopyMatching(query as CFDictionary, &result)
     if status == errSecItemNotFound {
-        return nil
+      return nil
     }
     guard status == errSecSuccess else {
       let statusMessage = SecCopyErrorMessageString(status, nil) as? String
@@ -127,12 +127,12 @@ public class SecureStorage {
     }
     
     if let resultArray = result as? [[String: Any]] {
-        return resultArray.compactMap { item in
-            guard let account = item[kSecAttrAccount as String] as? String else {
-                return nil // Skip if kSecAttrAccount is not a String
-            }
-            return account
+      return resultArray.compactMap { item in
+        guard let account = item[kSecAttrAccount as String] as? String else {
+          return nil // Skip if kSecAttrAccount is not a String
         }
+        return account
+      }
     }
     return []
   }
