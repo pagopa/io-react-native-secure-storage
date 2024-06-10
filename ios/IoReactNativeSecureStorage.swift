@@ -111,7 +111,7 @@ class IoReactNativeSecureStorage: NSObject {
       do{
         let keys = try self.storage.keys()
         resolve(keys)
-      }catch let secureStorageErr as SecureStorageError {
+      } catch let secureStorageErr as SecureStorageError {
         ME.keysRetrivialError.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
       }catch{
         ME.putFailed.reject(reject: reject, ("error", error.localizedDescription))
