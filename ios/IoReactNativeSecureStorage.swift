@@ -95,7 +95,7 @@ class IoReactNativeSecureStorage: NSObject {
         resolve(nil)
       } catch let secureStorageErr as SecureStorageError {
         ME.clearFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
-      }catch{
+      } catch {
         ME.clearFailed.reject(reject: reject, ("error", error.localizedDescription))
       }
     }
