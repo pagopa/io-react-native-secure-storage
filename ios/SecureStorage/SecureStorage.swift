@@ -87,8 +87,8 @@ public class SecureStorage {
   public func clear() throws {
     let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName] as [String: Any]
     let status = SecItemDelete(query as CFDictionary);
-    let statusMessage = SecCopyErrorMessageString(status, nil) as? String
     guard status == errSecSuccess || status == errSecItemNotFound else { //Ignore the errSecItemNotFound when calling clear on an empty keychain
+      let statusMessage = SecCopyErrorMessageString(status, nil) as? String
       throw SecureStorageError(description: statusMessage ?? "", code: Int(status))
     }
   }
