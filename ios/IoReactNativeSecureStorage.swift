@@ -93,7 +93,7 @@ class IoReactNativeSecureStorage: NSObject {
       do{
         try self.storage.clear()
         resolve(nil)
-      }catch let secureStorageErr as SecureStorageError {
+      } catch let secureStorageErr as SecureStorageError {
         ME.clearFailed.reject(reject: reject, ("error", secureStorageErr.description), ("code", secureStorageErr.code))
       }catch{
         ME.clearFailed.reject(reject: reject, ("error", error.localizedDescription))
