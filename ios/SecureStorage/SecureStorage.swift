@@ -97,7 +97,14 @@ public class SecureStorage {
   /// - Returns: an array of strings containing the keys currently used to store data. An empty array if there isn't any key.
   /// - Throws: An error of type `SecureStorageError` if the operation fails which wraps the message and the error code.
   public func keys() throws -> [String] {
-    let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecReturnRef: true, kSecReturnData: true, kSecReturnAttributes: true, kSecMatchLimit: kSecMatchLimitAll] as [String: Any]
+    let query: [String: Any] = [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrService: serviceName,
+      kSecReturnRef: true,
+      kSecReturnData: true,
+      kSecReturnAttributes: true,
+      kSecMatchLimit: kSecMatchLimitAll
+    ] as [String: Any]
     var result: AnyObject?
     let status = SecItemCopyMatching(query as CFDictionary, &result)
     if status == errSecItemNotFound { return [] }
