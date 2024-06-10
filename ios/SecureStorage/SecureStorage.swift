@@ -44,7 +44,12 @@ public class SecureStorage {
   public func get(
     key: String
   ) throws -> Data? {
-    let query: [String: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: serviceName, kSecReturnData: true, kSecAttrAccount: key] as [String: Any]
+    let query: [String: Any] = [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrService: serviceName,
+      kSecReturnData: true,
+      kSecAttrAccount: key
+    ] as [String: Any]
     var result: CFTypeRef?
     let status = SecItemCopyMatching(query as CFDictionary, &result)
     if status == errSecItemNotFound { return nil }
