@@ -23,7 +23,8 @@ type SecureStorageErrorCodesCommon =
   | 'PUT_FAILED'
   | 'CLEAR_FAILED'
   | 'REMOVE_FAILED'
-  | 'KEYS_RETRIEVAL_FAILED';
+  | 'KEYS_RETRIEVAL_FAILED'
+  | 'PLATFORM_NOT_SUPPORTED';
 
 /**
  * ANDROID ONLY
@@ -33,8 +34,9 @@ type SecureStoragErrorCodesAndroid =
   | 'SECURE_STORE_NOT_INITIALIZED'
   | 'TEST_EXCEPTION';
 
-export type SecureStorageErrorCodes = SecureStorageErrorCodesCommon &
-  SecureStoragErrorCodesAndroid;
+export type SecureStorageErrorCodes =
+  | SecureStorageErrorCodesCommon
+  | SecureStoragErrorCodesAndroid;
 
 /**
  * Error type returned by a rejected promise.
@@ -48,6 +50,14 @@ export type SecureStorageError = {
 };
 
 /**
+ * Error when the platform is not supported.
+ */
+const SecureStorageUnsupportedError: SecureStorageError = {
+  message: 'PLATFORM_NOT_SUPPORTED',
+  userInfo: {},
+};
+
+/**
  * ANDROID ONLY
  * Enforces manual encryption. By default, the builder takes care of
  * using an appropriate useEncryption value according to the
@@ -57,7 +67,11 @@ export type SecureStorageError = {
  * @return a promise that resolves.
  */
 export function setEnforceManualEncryption(isEnforced: boolean): Promise<void> {
-  return IoReactNativeSecureStorage.setEnforceManualEncryption(isEnforced);
+  return Platform.select({
+    android: () =>
+      IoReactNativeSecureStorage.setEnforceManualEncryption(isEnforced),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }
 
 /**
@@ -68,7 +82,11 @@ export function setEnforceManualEncryption(isEnforced: boolean): Promise<void> {
  * @throws {@link SecureStorageException} if an error occurs while storing the data.
  */
 export function put(key: string, data: string): Promise<void> {
-  return IoReactNativeSecureStorage.put(key, data);
+  return Platform.select({
+    ios: () => IoReactNativeSecureStorage.put(key, data),
+    android: () => IoReactNativeSecureStorage.put(key, data),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }
 
 /**
@@ -78,7 +96,11 @@ export function put(key: string, data: string): Promise<void> {
  * @throws {@link SecureStorageException} if an error occurs while getting the data or if there's no data associated with the given key.
  */
 export function get(key: string): Promise<string> {
-  return IoReactNativeSecureStorage.get(key);
+  return Platform.select({
+    ios: () => IoReactNativeSecureStorage.get(key),
+    android: () => IoReactNativeSecureStorage.get(key),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }
 
 /**
@@ -86,7 +108,11 @@ export function get(key: string): Promise<string> {
  * @throws {@link SecureStorageException} if an error occurs while clearing the storage.
  */
 export function clear(): Promise<void> {
-  return IoReactNativeSecureStorage.clear();
+  return Platform.select({
+    ios: () => IoReactNativeSecureStorage.clear(),
+    android: () => IoReactNativeSecureStorage.clear(),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }
 
 /**
@@ -96,7 +122,11 @@ export function clear(): Promise<void> {
  * @throws {@link SecureStorageException} if an error occurs while removing the data or if there's no data associated with the given key.
  */
 export function remove(key: String): Promise<void> {
-  return IoReactNativeSecureStorage.remove(key);
+  return Platform.select({
+    ios: () => IoReactNativeSecureStorage.remove(key),
+    android: () => IoReactNativeSecureStorage.remove(key),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }
 
 /**
@@ -106,7 +136,11 @@ export function remove(key: String): Promise<void> {
  * @throws {@link SecureStorageException} if an error occurs while removing the data or if there's no data associated with the given key.
  */
 export function keys(): Promise<string[]> {
-  return IoReactNativeSecureStorage.keys();
+  return Platform.select({
+    ios: () => IoReactNativeSecureStorage.keys(),
+    android: () => IoReactNativeSecureStorage.keys(),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }
 
 /**
@@ -116,5 +150,8 @@ export function keys(): Promise<string[]> {
  * can be found in the exception's message.
  */
 export function tests(): Promise<void> {
-  return IoReactNativeSecureStorage.tests();
+  return Platform.select({
+    android: () => IoReactNativeSecureStorage.tests(),
+    default: () => Promise.reject(SecureStorageUnsupportedError),
+  })();
 }

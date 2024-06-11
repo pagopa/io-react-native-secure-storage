@@ -28,6 +28,11 @@ Instead of managing raw bytes array, the bridge handles UTF-8 encoded strings fo
 </manifest>
 ```
 
+## iOS
+
+The iOS implementation is based on the [Keychain service](https://developer.apple.com/documentation/security/keychain_services/).
+Entries are stored as [kSecClassGenericPassword](https://developer.apple.com/documentation/security/ksecclassgenericpassword) with [kSecAttrAccessibleWhenUnlockedThisDeviceOnly](https://developer.apple.com/documentation/security/ksecattraccessiblewhenunlockedthisdeviceonly) attribute which makes them accessible only while the device is unlocked.
+
 ## API
 
 ### `put`
@@ -144,16 +149,17 @@ try {
 
 ## Error Codes
 
-|           TypeName           |  Platform   | Description                                                             |
-| :--------------------------: | :---------: | ----------------------------------------------------------------------- |
-|       VALUE_NOT_FOUND        | iOS/Android | No value has been found with the given key                              |
-|          GET_FAILED          | iOS/Android | A critical error occurred during the get operation                      |
-|          PUT_FAILED          | iOS/Android | A critical error occurred during the put operation                      |
-|         CLEAR_FAILED         | iOS/Android | A critical error occurred during the clear operation                    |
-|        REMOVE_FAILED         | iOS/Android | A critical error occurred during the remove operation                   |
-|    KEYS_RETRIEVAL_FAILED     | iOS/Android | A critical error occurred during the keys operation                     |
-| SECURE_STORE_NOT_INITIALIZED |   Android   | A critical error occurred while initializaing the secure storage engine |
-|        TEST_EXCEPTION        |   Android   | A critical error occurred while running the test suite                  |
+|           TypeName           |   Platform   | Description                                                             |
+| :--------------------------: | :----------: | ----------------------------------------------------------------------- |
+|       VALUE_NOT_FOUND        | iOS/Android  | No value has been found with the given key                              |
+|          GET_FAILED          | iOS/Android  | A critical error occurred during the get operation                      |
+|          PUT_FAILED          | iOS/Android  | A critical error occurred during the put operation                      |
+|         CLEAR_FAILED         | iOS/Android  | A critical error occurred during the clear operation                    |
+|        REMOVE_FAILED         | iOS/Android  | A critical error occurred during the remove operation                   |
+|    KEYS_RETRIEVAL_FAILED     | iOS/Android  | A critical error occurred during the keys operation                     |
+| SECURE_STORE_NOT_INITIALIZED |   Android    | A critical error occurred while initializaing the secure storage engine |
+|        TEST_EXCEPTION        |   Android    | A critical error occurred while running the test suite                  |
+|    PLATFORM_NOT_SUPPORTED    | Any platform | The platform is not supported by the library                            |
 
 ## Contributing
 
