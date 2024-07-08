@@ -1,5 +1,5 @@
 {
-  "name": "io-react-native-secure-storage",
+  "name": "@pagopa/io-react-native-secure-storage",
   "version": "0.1.1",
   "description": "React Native interfaces for managing secure storage in iOS and Android",
   "main": "lib/commonjs/index",
