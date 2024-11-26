@@ -1,13 +1,13 @@
-# io-react-native-secure-storage
+# @pagopa/io-react-native-secure-storage
 
 React Native interfaces for managing secure storage in iOS and Android.
 
 ## Installation
 
 ```sh
-npm install io-react-native-secure-storage
+npm install @pagopa/io-react-native-secure-storage
 # or
-yarn add io-react-native-secure-storage
+yarn add @pagopa/io-react-native-secure-storage
 ```
 
 ## Android

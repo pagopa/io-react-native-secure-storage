@@ -9,7 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import * as SecureStorage from 'io-react-native-secure-storage';
+import * as SecureStorage from '@pagopa/io-react-native-secure-storage';
 import CheckBox from '@react-native-community/checkbox';
 
 const MARGIN = 20;
