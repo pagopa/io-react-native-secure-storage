@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import * as SecureStorage from '@pagopa/io-react-native-secure-storage';
 import CheckBox from '@react-native-community/checkbox';
@@ -152,6 +153,7 @@ export default function App() {
     try {
       setIsLoading(true);
       await SecureStorage.tests();
+      Alert.alert('Tests completed');
     } catch (e) {
       const error = e as SecureStorage.SecureStorageError;
       setStatus(`Error: ${error.message}`);

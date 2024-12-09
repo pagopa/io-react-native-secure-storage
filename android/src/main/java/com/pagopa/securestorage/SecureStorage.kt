@@ -194,9 +194,8 @@ class SecureStorage private constructor(
       keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
     ).setBlockModes(KeyProperties.BLOCK_MODE_GCM).setKeySize(128)
       .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-      if (hasStrongBox) builder.setIsStrongBoxBacked(true)
-      builder.setUnlockedDeviceRequired(true)
+    if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) && hasStrongBox) {
+      builder.setIsStrongBoxBacked(true)
     }
     val keyPairGenerator = KeyGenerator.getInstance(
       KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER
