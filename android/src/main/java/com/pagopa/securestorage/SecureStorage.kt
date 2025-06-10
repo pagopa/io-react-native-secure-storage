@@ -97,6 +97,7 @@ class SecureStorage private constructor(
    */
   fun get(key: String): ByteArray? {
     return runCatching {
+      throw IllegalStateException("Unrecognized file prefix")
       val file = AtomicFile(getFile(key))
       val data = file.readFully()
       check(data.size >= PREFIX_ENCRYPTED_SIZE) { "File must be bigger than $PREFIX_ENCRYPTED_SIZE bytes" }
