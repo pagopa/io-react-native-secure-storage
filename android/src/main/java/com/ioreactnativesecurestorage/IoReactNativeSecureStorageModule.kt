@@ -67,9 +67,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         }
       } catch (e: Exception) {
         ModuleException.PUT_FAILED.reject(
-          promise,
-          Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e)),
-          exception = e
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -91,9 +89,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         }
       } catch (e: Exception) {
         ModuleException.GET_FAILED.reject(
-          promise,
-          Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e)),
-          exception = e
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -113,9 +109,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         }
       } catch (e: Exception) {
         ModuleException.CLEAR_FAILED.reject(
-          promise,
-          Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e)),
-          exception = e
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -135,9 +129,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         }
       } catch (e: Exception) {
         ModuleException.REMOVE_FAILED.reject(
-          promise,
-          Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e)),
-          exception = e
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -159,9 +151,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
       }
     } catch (e: Exception) {
       ModuleException.KEYS_RETRIEVAL_FAILED.reject(
-        promise,
-        Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e)),
-        exception = e
+        promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
       )
     }
   }
@@ -188,9 +178,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         promise.resolve(null)
       } catch (e: Exception) {
         ModuleException.TEST_EXCEPTION.reject(
-          promise,
-          Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e)),
-          exception = e
+          promise, Pair(ERROR_USER_INFO_KEY, getExceptionMessageOrEmpty(e))
         )
       }
     }.start()
@@ -221,25 +209,29 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
 
       /**
        * Rejects the provided promise with the appropriate error message and additional data.
-       * Automatically includes native stack trace when an exception is provided.
        *
-       * @param promise the promise to be rejected
-       * @param args additional key-value pairs to include in the error data
-       * @param exception optional throwable to include native stack trace (defaults to this.ex)
+       * @param promise the promise to be rejected.
+       * @param args additional key-value pairs of data to be passed along with the error.
        */
       fun reject(
-        promise: Promise,
-        vararg args: Pair<String, String>,
-        exception: Throwable? = null
+        promise: Promise, vararg args: Pair<String, String>
       ) {
-        val errorCode = name
-        val errorMessage = this.ex.message ?: "UNKNOWN"
-
-        val extra = WritableNativeMap().apply {
-          args.forEach { putString(it.first, it.second) }
+        exMap(*args).let {
+          promise.reject(it.first, ex.message, it.second)
         }
+      }
 
-        promise.reject(errorCode, errorMessage, exception ?: this.ex, extra)
+      /**
+       * Maps the additional key-value pairs of data to a pair containing the error message
+       * and a WritableMap of the additional data.
+       *
+       * @param args additional key-value pairs of data.
+       * @return A pair containing the error message and a WritableMap of the additional data.
+       */
+      private fun exMap(vararg args: Pair<String, String>): Pair<String, WritableMap> {
+        val writableMap = WritableNativeMap()
+        args.forEach { writableMap.putString(it.first, it.second) }
+        return Pair(this.ex.message ?: "UNKNOWN", writableMap)
       }
     }
   }
