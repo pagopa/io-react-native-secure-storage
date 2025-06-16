@@ -217,7 +217,7 @@ class IoReactNativeSecureStorageModule(reactContext: ReactApplicationContext) :
         promise: Promise, vararg args: Pair<String, String>
       ) {
         exMap(*args).let {
-          promise.reject(it.first, ex.message, it.second)
+          promise.reject(it.first, ex, it.second)
         }
       }
 
